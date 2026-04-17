@@ -1,29 +1,36 @@
-<table class="uk-table uk-table-divider">
-  <thead>
-    <tr>
-      <th>用户名</th>
-      <th>管理员权限</th>
-      <th>操作</th>
-    </tr>
-  </thead>
-  <tbody>
-    <%- users.each do |u| -%>
+<div class="admin-sub-page">
+  <table class="uk-table mango-table uk-table-middle">
+    <thead>
       <tr>
-        <td><%= u[0] %></td>
-        <td><%= u[1] %></td>
-        <td>
-          <a href="<%= base_url %>admin/user/edit?username=<%= u[0] %>&admin=<%= u[1] %>" uk-icon="file-edit"></a>
-          <%- if u[0] != username %>
-            <a href="#" onclick="remove('<%= u[0] %>');return false;" uk-icon="trash"></a>
-          <%- end %>
-        </td>
+        <th>用户名</th>
+        <th>管理员权限</th>
+        <th>操作</th>
       </tr>
-    <%- end -%>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <%- users.each do |u| -%>
+        <tr>
+          <td><strong><%= u[0] %></strong></td>
+          <td>
+            <% if u[1] %>
+              <span class="status-label status-success">是</span>
+            <% else %>
+              <span class="status-label status-pending">否</span>
+            <% end %>
+          </td>
+          <td>
+            <a href="<%= base_url %>admin/user/edit?username=<%= u[0] %>&admin=<%= u[1] %>" class="table-action" aria-label="编辑用户" uk-tooltip="编辑"><span uk-icon="file-edit"></span></a>
+            <%- if u[0] != username %>
+              <a href="#" onclick="remove('<%= u[0] %>');return false;" class="table-action table-action-danger" aria-label="删除用户" uk-tooltip="删除"><span uk-icon="trash"></span></a>
+            <%- end %>
+          </td>
+        </tr>
+      <%- end -%>
+    </tbody>
+  </table>
 
-<a href="<%= base_url %>admin/user/edit" class="uk-button uk-button-primary">新用户</a>
-
+  <a href="<%= base_url %>admin/user/edit" class="uk-button mango-btn mango-btn-primary mango-btn-sm"><i class="fas fa-plus uk-margin-small-right"></i> 新用户</a>
+</div>
 
 <% content_for "script" do %>
   <script src="<%= base_url %>js/alert.js"></script>

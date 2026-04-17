@@ -156,9 +156,9 @@ const renameSortNameSubmit = (name, eid) => {
 const edit = (eid) => {
 	const cover = $('#edit-modal #cover');
 	let url = cover.attr('data-title-cover');
-	let displayName = $('h2.uk-title > span').text();
-	let fileTitle = $('h2.uk-title').attr('data-file-title');
-	let sortTitle = $('h2.uk-title').attr('data-sort-title');
+	let displayName = $('h2.title-heading > span').text();
+	let fileTitle = $('h2.title-heading').attr('data-file-title');
+	let sortTitle = $('h2.title-heading').attr('data-sort-title');
 
 	if (eid) {
 		const item = $(`#${eid}`);

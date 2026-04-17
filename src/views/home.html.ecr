@@ -1,15 +1,19 @@
+<div class="home-page">
+
 <%- if new_user && empty_library -%>
 
-  <div class="uk-container uk-text-center">
-    <i class="fas fa-plus" style="font-size: 80px;"></i>
+  <div class="empty-state">
+    <div class="empty-icon">
+      <i class="fas fa-plus"></i>
+    </div>
     <h2>添加你的第一部漫画</h2>
-    <p style="margin-bottom: 40px;">我们还找不到任何文件。添加一些到您的库中，它们将出现在此处。</p>
+    <p>我们还找不到任何文件。添加一些到您的库中，它们将出现在此处。</p>
     <dl class="uk-description-list">
-      <dt style="font-weight: 500;">当前资源库路径</dt>
+      <dt>当前资源库路径</dt>
       <dd><code><%= Config.current.library_path %></code></dd>
-      <dt style="font-weight: 500;">想要更改您的资源库路径？</dt>
+      <dt>想要更改您的资源库路径？</dt>
       <dd>配置 <code>config.yml</code> 其路径为: <code><%= Config.current.path %></code></dd>
-      <dt style="font-weight: 500;">还看不到您的文件？</dt>
+      <dt>还看不到您的文件？</dt>
       <dd>
       您必须等待 <%= Config.current.scan_interval_minutes %> 分钟才能完成库扫描
       <% if is_admin %>
@@ -21,27 +25,34 @@
 
 <%- elsif new_user && empty_library == false -%>
 
-  <div class="uk-container uk-text-center">
-    <i class="fas fa-book-open" style="font-size: 80px;"></i>
+  <div class="empty-state">
+    <div class="empty-icon">
+      <i class="fas fa-book-open"></i>
+    </div>
     <h2>阅读你的第一部漫画</h2>
-    <p>一旦你开始阅读，Mango 会记住你离开的地方
-    并在此处显示您的条目。</p>
-    <a href="<%= base_url %>library" class="uk-button uk-button-default">查看库</a>
+    <p>一旦你开始阅读，Mango 会记住你离开的地方并在此处显示您的条目。</p>
+    <a href="<%= base_url %>library" class="uk-button mango-btn mango-btn-primary">查看库</a>
   </div>
 
 <%- elsif new_user == false && empty_library == false -%>
 
   <%- if continue_reading.empty? && recently_added.empty? -%>
-    <div class="uk-container uk-text-center">
-      <img src="<%= base_url %>img/banner.png" style="max-width: 400px; padding: 0 20px;">
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="fas fa-book-reader"></i>
+      </div>
+      <h2>欢迎来到 Mango</h2>
       <p>一个自托管的漫画服务器和阅读器</p>
-      <a href="<%= base_url %>library" class="uk-button uk-button-default">查看库</a>
+      <a href="<%= base_url %>library" class="uk-button mango-btn mango-btn-primary">查看库</a>
     </div>
   <%- end -%>
 
   <%- unless continue_reading.empty? -%>
-    <h2 class="uk-title home-headings">继续阅读</h2>
-    <div class="uk-child-width-1-4@m uk-child-width-1-2" uk-grid>
+    <div class="section-header">
+      <h2 class="section-heading">继续阅读</h2>
+      <span class="section-count"><%= continue_reading.size %></span>
+    </div>
+    <div class="uk-child-width-1-4@m uk-child-width-1-2 card-grid-animated" uk-grid>
       <%- continue_reading.each do |cr| -%>
         <% item = cr[:entry] %>
         <% progress = cr[:percentage] %>
@@ -51,8 +62,12 @@
   <%- end -%>
 
   <%- unless start_reading.empty? -%>
-    <h2 class="uk-title home-headings">开始阅读</h2>
-    <div class="uk-child-width-1-4@m uk-child-width-1-2" uk-grid>
+    <div class="section-header">
+      <h2 class="section-heading">开始阅读</h2>
+      <span class="section-count"><%= start_reading.size %></span>
+      <a class="section-link" href="<%= base_url %>library">查看全部 <i class="fas fa-arrow-right" style="font-size: 0.7em;"></i></a>
+    </div>
+    <div class="uk-child-width-1-4@m uk-child-width-1-2 card-grid-animated" uk-grid>
       <%- start_reading.each do |t| -%>
         <% item = t %>
         <% progress = 0.0 %>
@@ -62,8 +77,12 @@
   <%- end -%>
 
   <%- unless recently_added.empty? -%>
-    <h2 class="uk-title home-headings">最近添加</h2>
-    <div class="uk-child-width-1-4@m uk-child-width-1-2" uk-grid>
+    <div class="section-header">
+      <h2 class="section-heading">最近添加</h2>
+      <span class="section-count"><%= recently_added.size %></span>
+      <a class="section-link" href="<%= base_url %>library">查看全部 <i class="fas fa-arrow-right" style="font-size: 0.7em;"></i></a>
+    </div>
+    <div class="uk-child-width-1-4@m uk-child-width-1-2 card-grid-animated" uk-grid>
       <%- recently_added.each do |ra| -%>
         <% item = ra %>
         <% progress = ra[:percentage] %>
@@ -75,6 +94,8 @@
   <%= render_component "entry-modal" %>
 
 <%- end -%>
+
+</div>
 
 <% content_for "script" do %>
   <%= render_component "dots" %>

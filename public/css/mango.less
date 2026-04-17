@@ -11,6 +11,19 @@
     url('@{fa-font-path}/fa-solid-900.woff') format('woff');
 }
 
+// ============================================
+// Design System Variables
+// ============================================
+@accent-start: #667eea;
+@accent-end: #764ba2;
+@accent-gradient: linear-gradient(135deg, @accent-start 0%, @accent-end 100%);
+@radius-sm: 8px;
+@radius-md: 12px;
+@radius-lg: 16px;
+@shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+@shadow-md: 0 4px 20px rgba(0,0,0,0.1);
+@shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+
 // Item cards
 .item .uk-card {
     cursor: pointer;
@@ -32,12 +45,18 @@
 		}
 	}
 	.uk-card-body {
-		padding: 20px;
+		padding: 16px;
 		.uk-card-title {
-			font-size: 1rem;
+			font-size: 0.95rem;
+			font-weight: 600;
+			color: #333;
 		}
 		.uk-card-title:not(.free-height) {
 			max-height: 3em;
+		}
+		.uk-text-meta {
+			font-size: 0.8rem;
+			color: #999;
 		}
 	}
 }
@@ -79,39 +98,14 @@
 	}
 }
 
-// Dark theme
-.uk-light {
-	.uk-modal-header,
-	.uk-modal-body,
-	.uk-modal-footer {
-		background: #222;
-	}
-	.uk-navbar-dropdown,
-	.uk-dropdown {
-		color: #ccc;
-		background: #333;
-	}
-	.uk-nav-header,
-	.uk-description-list > dt {
-		color: #555;
-	}
-}
+// (Dark theme rules merged into the main .uk-light block at the end of this file)
 
 // Alpine magic
 [x-cloak] {
     display: none;
 }
 
-// Batch select bar on title page
-#select-bar-controls {
-	a {
-		transform: scale(1.5, 1.5);
-
-		&:hover {
-			color: orange;
-		}
-	}
-}
+// (Select bar controls styles moved into #select-bar block in design system)
 
 // Totop button
 #totop-wrapper {
@@ -125,6 +119,2406 @@
 		position: sticky;
 		top: calc(100vh - 5em);
 	}
+}
+
+// Login page
+@login-orb-1: rgba(102, 126, 234, 0.25);
+@login-orb-2: rgba(118, 75, 162, 0.2);
+@login-orb-3: rgba(102, 126, 234, 0.12);
+
+@keyframes login-orb-float-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(60px, -40px) scale(1.08); }
+  50% { transform: translate(-30px, -80px) scale(0.95); }
+  75% { transform: translate(40px, -20px) scale(1.04); }
+}
+@keyframes login-orb-float-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(-50px, 30px) scale(1.06); }
+  50% { transform: translate(40px, 60px) scale(0.92); }
+  75% { transform: translate(-20px, 40px) scale(1.08); }
+}
+@keyframes login-orb-float-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-60px, 20px) scale(0.9); }
+}
+@keyframes login-card-entrance {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes login-footer-entrance {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-page {
+  background: @accent-gradient;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+
+  .uk-section {
+    background: transparent;
+  }
+
+  // --- Animated background orbs ---
+  .login-orbs {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .login-orb {
+    position: absolute;
+    border-radius: 50%;
+    will-change: transform;
+  }
+
+  .login-orb-1 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, @login-orb-1 0%, transparent 70%);
+    top: -10%;
+    right: -5%;
+    animation: login-orb-float-1 18s ease-in-out infinite;
+  }
+
+  .login-orb-2 {
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, @login-orb-2 0%, transparent 70%);
+    bottom: -8%;
+    left: -8%;
+    animation: login-orb-float-2 22s ease-in-out infinite;
+  }
+
+  .login-orb-3 {
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, @login-orb-3 0%, transparent 70%);
+    top: 40%;
+    left: 30%;
+    animation: login-orb-float-3 15s ease-in-out infinite;
+  }
+
+  // --- Card ---
+  .login-card {
+    border-radius: 16px;
+    border: none;
+    padding: 0;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25), 0 8px 20px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    animation: login-card-entrance 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.1s;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3), 0 10px 24px rgba(0, 0, 0, 0.18);
+    }
+  }
+
+  // --- Gradient accent stripe at top of card ---
+  .login-stripe {
+    height: 4px;
+    background: @accent-gradient;
+    width: 100%;
+  }
+
+  // --- Card inner padding (below stripe) ---
+  .login-card > .login-header,
+  .login-card > .login-form {
+    padding-left: 36px;
+    padding-right: 36px;
+  }
+
+  .login-header {
+    margin-bottom: 8px;
+    padding-top: 36px;
+  }
+
+  .login-form {
+    padding-bottom: 36px;
+  }
+
+  // --- Logo ---
+  .login-logo {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 16px;
+    border-radius: 18px;
+    background: @accent-gradient;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.45);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    .uk-icon {
+      color: #fff;
+    }
+
+    &:hover {
+      transform: scale(1.06);
+      box-shadow: 0 8px 28px rgba(102, 126, 234, 0.55);
+    }
+  }
+
+  .login-card .uk-card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .login-subtitle {
+    color: #888;
+    font-size: 0.95rem;
+    margin: 0 0 8px;
+  }
+
+  // --- Form fields ---
+  .login-field {
+    margin-top: 20px;
+
+    &.login-field-btn {
+      margin-top: 24px;
+    }
+  }
+
+  .login-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  .login-input {
+    border-radius: 10px !important;
+    padding-left: 44px !important;
+    padding-right: 48px !important;
+    border: 2px solid #e5e5e5 !important;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    font-size: 1rem !important;
+    height: 48px !important;
+    line-height: 48px !important;
+
+    &:focus {
+      border-color: @accent-start !important;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
+      outline: none;
+    }
+
+    &::placeholder {
+      color: #bbb;
+    }
+  }
+
+  // --- Form icon color transition on focus ---
+  .login-form-icon {
+    color: #999;
+    transition: color 0.25s ease;
+  }
+
+  .login-form-icon-active {
+    color: @accent-start !important;
+  }
+
+  // --- Password toggle ---
+  .login-toggle-pw {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999;
+    padding: 4px;
+    line-height: 1;
+    z-index: 1;
+    transition: color 0.2s ease, background 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    width: 32px;
+    border-radius: 6px;
+
+    &:hover {
+      color: @accent-start;
+      background: rgba(102, 126, 234, 0.08);
+    }
+
+    &:focus-visible {
+      outline: 2px solid @accent-start;
+      outline-offset: 2px;
+    }
+
+    &:active {
+      color: #5a6fd6;
+    }
+  }
+
+  .login-eye-icon {
+    font-size: 16px;
+    width: 16px;
+    text-align: center;
+  }
+
+  // --- Login button ---
+  .login-btn {
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 1.05rem !important;
+    letter-spacing: 0.02em;
+    background: @accent-gradient !important;
+    border: none !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    will-change: transform;
+    height: 48px !important;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.35);
+    position: relative;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(102, 126, 234, 0.45) !important;
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  .login-btn-spinner {
+    font-size: 1.2rem;
+  }
+
+  // --- Footer ---
+  .login-footer {
+    animation: login-footer-entrance 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.4s;
+    margin-top: 20px;
+
+    p {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+  }
+}
+
+// Dark theme overrides for login page
+.uk-light.login-page {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+
+  // Orbs dark — slightly more visible
+  .login-orb-1 {
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.18) 0%, transparent 70%) !important;
+  }
+  .login-orb-2 {
+    background: radial-gradient(circle, rgba(118, 75, 162, 0.15) 0%, transparent 70%) !important;
+  }
+  .login-orb-3 {
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%) !important;
+  }
+
+  // Stripe dark — same gradient, already looks good on dark card
+
+  .login-card {
+    background: rgba(30, 30, 50, 0.95);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .login-subtitle {
+    color: #777;
+  }
+
+  .login-label {
+    color: #aaa;
+  }
+
+  .login-input {
+    border-color: #333 !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: #eee !important;
+
+    &:focus {
+      border-color: @accent-start !important;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25) !important;
+    }
+
+    &::placeholder {
+      color: #555;
+    }
+  }
+
+  .login-form-icon {
+    color: #666;
+  }
+
+  .login-form-icon-active {
+    color: #8b9cf7 !important;
+  }
+
+  .login-toggle-pw {
+    color: #666;
+
+    &:hover {
+      color: #8b9cf7;
+      background: rgba(102, 126, 234, 0.12);
+    }
+  }
+
+  // Footer dark
+  .login-footer p {
+    color: rgba(255, 255, 255, 0.35);
+  }
+}
+
+// Reduced motion — disable login animations
+@media (prefers-reduced-motion: reduce) {
+  .login-page {
+    .login-orb { animation: none !important; }
+    .login-card { animation: none !important; opacity: 1 !important; }
+    .login-footer { animation: none !important; opacity: 1 !important; }
+  }
+}
+
+// ============================================
+// Modern Design System — aligned with login page
+// Accent: #667eea → #764ba2 gradient
+// ============================================
+
+// --- Navbar (glassmorphism) ---
+.mango-navbar {
+  background: rgba(255,255,255,0.82) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  transition: background 0.3s ease;
+  z-index: 1000;
+
+  .uk-navbar-nav > li > a {
+    font-weight: 500;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+    transition: color 0.2s ease;
+    color: #555;
+    height: 56px;
+    line-height: 56px;
+
+    &:hover, &:focus {
+      color: @accent-start;
+    }
+  }
+
+  .uk-navbar-nav > li.uk-active > a {
+    color: @accent-start;
+  }
+
+  .uk-logo img {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: @radius-sm;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.08);
+    }
+  }
+
+  .uk-navbar-right .uk-navbar-nav > li > a {
+    color: #777;
+    font-size: 1rem;
+    padding: 0 12px;
+
+    i { transition: transform 0.3s ease; }
+    &:hover i { transform: rotate(20deg); }
+  }
+
+  // Mobile hamburger
+  .uk-navbar-toggle {
+    color: #555;
+  }
+}
+
+// Mobile offcanvas
+#mobile-nav .uk-offcanvas-bar {
+  background: #fff;
+  box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+
+  .uk-nav-primary > li > a {
+    font-weight: 500;
+    color: #333;
+    padding: 12px 20px;
+    border-radius: @radius-sm;
+    transition: background 0.2s ease, color 0.2s ease;
+
+    &:hover {
+      background: rgba(102, 126, 234, 0.08);
+      color: @accent-start;
+    }
+  }
+
+  .uk-nav-primary > li.uk-active > a {
+    color: @accent-start;
+  }
+
+  .uk-close {
+    color: #555;
+  }
+}
+
+// --- Page Headings ---
+.page-heading {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 4px;
+  padding-left: 16px;
+  border-left: 4px solid;
+  border-image: @accent-gradient 1;
+  line-height: 1.3;
+}
+
+.page-subtitle {
+  color: #888;
+  font-size: 0.9rem;
+  margin-top: 4px;
+  margin-bottom: 20px;
+  padding-left: 20px;
+}
+
+// --- Section Headings (home page) ---
+.section-heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  position: relative;
+  display: inline-block;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    border-radius: 2px;
+    background: @accent-gradient;
+  }
+}
+
+// --- Section header row (heading + count + link) ---
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+
+  .section-heading {
+    margin-bottom: 0;
+    padding-bottom: 8px;
+  }
+
+  .section-count {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #999;
+    background: rgba(102, 126, 234, 0.08);
+    padding: 2px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.02em;
+  }
+
+  .section-link {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: @accent-start;
+    text-decoration: none;
+    margin-left: auto;
+    transition: color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    &:hover {
+      color: @accent-end;
+      text-decoration: underline;
+    }
+  }
+}
+
+// --- Home page ---
+.home-page {
+  .section-header + .uk-grid {
+    margin-top: 4px;
+  }
+
+  .section-header + .empty-state {
+    margin-top: 0;
+  }
+}
+
+// --- Card grid staggered entrance ---
+@keyframes card-entrance {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-grid-animated {
+  .item {
+    animation: card-entrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  // Stagger: each subsequent card gets a slight delay (up to 12 cards)
+  .item:nth-child(1)  { animation-delay: 0.00s; }
+  .item:nth-child(2)  { animation-delay: 0.04s; }
+  .item:nth-child(3)  { animation-delay: 0.08s; }
+  .item:nth-child(4)  { animation-delay: 0.12s; }
+  .item:nth-child(5)  { animation-delay: 0.16s; }
+  .item:nth-child(6)  { animation-delay: 0.20s; }
+  .item:nth-child(7)  { animation-delay: 0.24s; }
+  .item:nth-child(8)  { animation-delay: 0.28s; }
+  .item:nth-child(9)  { animation-delay: 0.32s; }
+  .item:nth-child(10) { animation-delay: 0.36s; }
+  .item:nth-child(11) { animation-delay: 0.40s; }
+  .item:nth-child(12) { animation-delay: 0.44s; }
+}
+
+// Reduced motion — disable card animations
+@media (prefers-reduced-motion: reduce) {
+  .card-grid-animated .item {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
+// --- Library page ---
+.library-page {
+  .library-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 24px;
+
+    .search-bar {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .sort-form-wrapper {
+      flex-shrink: 0;
+      min-width: 160px;
+    }
+  }
+
+  // No results state
+  .no-results {
+    text-align: center;
+    padding: 48px 20px;
+    display: none;
+
+    .no-results-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(102, 126, 234, 0.1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: @accent-start;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    p {
+      color: #888;
+      font-size: 0.92rem;
+    }
+  }
+}
+
+// --- Title count badge on page heading ---
+.page-heading-badge {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #999;
+  background: rgba(102, 126, 234, 0.08);
+  padding: 3px 12px;
+  border-radius: 14px;
+  letter-spacing: 0.02em;
+  margin-left: 12px;
+  vertical-align: middle;
+}
+
+// --- Empty States ---
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+
+  .empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 24px;
+    background: @accent-gradient;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+
+    i { color: #fff; }
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: #888;
+    font-size: 0.95rem;
+    max-width: 420px;
+    margin: 0 auto 24px;
+    line-height: 1.6;
+  }
+
+  dl {
+    text-align: left;
+    max-width: 480px;
+    margin: 0 auto 24px;
+    background: #fafafa;
+    border-radius: @radius-md;
+    padding: 20px 24px;
+
+    dt {
+      font-weight: 600;
+      color: #555;
+      font-size: 0.9rem;
+      margin-top: 12px;
+
+      &:first-child { margin-top: 0; }
+    }
+    dd {
+      color: #333;
+      font-size: 0.9rem;
+      margin: 4px 0 0;
+
+      code {
+        background: rgba(102, 126, 234, 0.1);
+        color: @accent-start;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+      }
+    }
+  }
+
+  .mango-btn {
+    margin-top: 8px;
+  }
+}
+
+// --- Action / Navigation Buttons ---
+.mango-btn {
+  border-radius: @radius-md !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  padding: 0 28px !important;
+  height: 44px !important;
+  line-height: 44px !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  letter-spacing: 0.01em;
+  will-change: transform;
+
+  &.mango-btn-primary {
+    background: @accent-gradient !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 4px 14px rgba(102, 126, 234, 0.3);
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
+      color: #fff !important;
+    }
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25) !important;
+    }
+  }
+
+  &.mango-btn-outline {
+    background: transparent !important;
+    color: @accent-start !important;
+    border: 2px solid @accent-start !important;
+    box-shadow: none;
+
+    &:hover {
+      background: rgba(102, 126, 234, 0.06) !important;
+      transform: translateY(-1px);
+      box-shadow: @shadow-sm !important;
+      color: @accent-start !important;
+    }
+  }
+
+  &.mango-btn-danger {
+    background: linear-gradient(135deg, #ef5350, #e53935) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 4px 14px rgba(239, 83, 80, 0.3);
+    border-radius: @radius-md !important;
+    font-weight: 600 !important;
+    height: 44px !important;
+    line-height: 44px !important;
+    padding: 0 28px !important;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(239, 83, 80, 0.4) !important;
+    }
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &.mango-btn-sm {
+    border-radius: @radius-sm !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    padding: 0 18px !important;
+    height: 38px !important;
+    line-height: 38px !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+}
+
+// --- Search Bar ---
+.search-bar {
+  position: relative;
+
+  .search-input {
+    border-radius: @radius-md !important;
+    border: 2px solid #e8e8e8 !important;
+    padding-left: 44px !important;
+    padding-right: 16px !important;
+    height: 44px !important;
+    font-size: 0.95rem !important;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+
+    &:focus {
+      border-color: @accent-start !important;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12) !important;
+      outline: none;
+    }
+
+    &::placeholder {
+      color: #aaa;
+    }
+  }
+
+  .search-icon {
+    color: #999;
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+  }
+}
+
+// --- Sort Dropdown ---
+.sort-select {
+  border-radius: @radius-md !important;
+  border: 2px solid #e8e8e8 !important;
+  height: 44px !important;
+  font-size: 0.9rem !important;
+  padding: 0 12px !important;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+
+  &:focus {
+    border-color: @accent-start !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12) !important;
+    outline: none;
+  }
+}
+
+// --- Item Cards (enhanced) ---
+.item .uk-card.uk-card-default {
+  border-radius: @radius-md;
+  overflow: hidden;
+  box-shadow: @shadow-sm;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border: 1px solid rgba(0,0,0,0.04);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: @shadow-lg;
+  }
+}
+
+// --- Admin spin animation ---
+@keyframes admin-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// Progress badge
+.uk-card-badge.label {
+  background: @accent-gradient !important;
+  color: #fff !important;
+  border-radius: 20px !important;
+  font-size: 0.7rem !important;
+  font-weight: 600;
+  padding: 3px 10px !important;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+}
+
+// --- Breadcrumbs ---
+.breadcrumb-nav {
+  margin-bottom: 16px;
+
+  .uk-breadcrumb {
+    margin-bottom: 0;
+    padding: 8px 0;
+
+    li a {
+      color: #888;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+      text-decoration: none;
+
+      &:hover {
+        color: @accent-start;
+      }
+    }
+
+    li.uk-disabled a {
+      color: #555;
+      font-weight: 600;
+      cursor: default;
+    }
+
+    > :nth-child(n+2)::before {
+      color: #ccc;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+// --- Title Detail Page ---
+.title-heading {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  line-height: 1.3;
+
+  > span {
+    padding-left: 16px;
+    border-left: 4px solid transparent;
+    border-image: @accent-gradient 1;
+  }
+
+  .uk-icon-button {
+    border-radius: 10px;
+    width: 32px;
+    height: 32px;
+    background: rgba(102, 126, 234, 0.08);
+    color: @accent-start;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: @accent-gradient;
+      color: #fff;
+      transform: scale(1.1);
+    }
+  }
+}
+
+// --- Batch Select Bar ---
+#select-bar {
+  border-radius: @radius-md;
+  border: 2px solid rgba(255, 165, 0, 0.5) !important;
+  background: rgba(255, 165, 0, 0.06) !important;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(255, 165, 0, 0.12);
+  transition: box-shadow 0.3s ease;
+
+  p {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  #select-bar-controls a {
+    transform: scale(1.3);
+    transition: color 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      color: @accent-start;
+      transform: scale(1.5);
+    }
+  }
+}
+
+// --- Tag Select (select2) ---
+.tag-select-wrapper {
+  margin-bottom: 16px;
+
+  .select2-container--default {
+    .select2-selection--multiple {
+      border-radius: @radius-md;
+      border: 2px solid #e8e8e8;
+      min-height: 44px;
+      padding: 4px 8px;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+
+      .select2-selection__choice {
+        border-radius: 20px;
+        background: rgba(102, 126, 234, 0.12);
+        color: @accent-start;
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        font-weight: 500;
+        font-size: 0.85rem;
+        padding: 2px 10px;
+      }
+
+      .select2-selection__choice__remove,
+      .select2-selection__choice__remove:hover {
+        background: none;
+        color: @accent-start;
+        font-size: 1rem;
+        margin-right: 4px;
+        border: none;
+      }
+
+      .select2-search__field {
+        font-size: 0.9rem;
+      }
+    }
+
+    &.select2-container--focus .select2-selection--multiple {
+      border-color: @accent-start;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12);
+    }
+  }
+
+  .select2-dropdown {
+    border-radius: @radius-md;
+    border: 2px solid #e8e8e8;
+    overflow: hidden;
+    box-shadow: @shadow-md;
+  }
+}
+
+// --- Modals (modernized) ---
+.mango-modal .uk-modal-dialog {
+  border-radius: @radius-lg;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.1);
+
+  .uk-modal-header {
+    padding: 24px 28px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    background: #fafafa;
+  }
+
+  .uk-modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #222;
+  }
+
+  .uk-modal-body {
+    padding: 20px 28px;
+  }
+
+  .uk-modal-footer {
+    padding: 16px 28px;
+    border-top: 1px solid #f0f0f0;
+    background: #fafafa;
+  }
+
+  .uk-modal-close-default {
+    top: 16px;
+    right: 16px;
+    opacity: 0.5;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      opacity: 1;
+      transform: scale(1.15);
+    }
+  }
+
+  // Form elements inside modals
+  .uk-form-label {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: #555;
+    letter-spacing: 0.01em;
+  }
+
+  .uk-input, .uk-select {
+    border-radius: @radius-sm;
+    border: 2px solid #e8e8e8;
+    height: 42px;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+
+    &:focus {
+      border-color: @accent-start;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12);
+    }
+  }
+
+  // Entry modal section labels and action groups
+  .modal-section-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+    margin-top: 16px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+}
+
+// --- Reader Page ---
+.reader-page {
+  background: #0a0a0a;
+
+  .uk-section {
+    background: transparent;
+  }
+
+  // Settings modal specific
+  .reader-modal .uk-modal-dialog {
+    border-radius: @radius-lg;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+
+    .uk-modal-header {
+      padding: 24px 28px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: #1a1a2e;
+    }
+
+    .uk-modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #eee;
+    }
+
+    .uk-text-meta {
+      color: #777;
+    }
+
+    .uk-modal-body {
+      padding: 20px 28px;
+      background: #16162a;
+    }
+
+    .uk-modal-footer {
+      padding: 16px 28px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      background: #1a1a2e;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .uk-modal-close-default {
+      top: 16px;
+      right: 16px;
+      color: #888;
+      opacity: 0.6;
+      transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease;
+
+      &:hover {
+        opacity: 1;
+        transform: scale(1.15);
+        color: #fff;
+      }
+    }
+
+    .uk-form-label {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: #aaa;
+      letter-spacing: 0.01em;
+    }
+
+    .uk-select {
+      border-radius: @radius-sm;
+      border: 2px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      color: #ddd;
+      height: 42px;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+
+      &:focus {
+        border-color: @accent-start;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+      }
+
+      option {
+        background: #1a1a2e;
+        color: #ddd;
+      }
+    }
+
+    .uk-range {
+      accent-color: @accent-start;
+    }
+
+    .uk-checkbox {
+      accent-color: @accent-start;
+    }
+
+    .uk-divider-icon {
+      border-top-color: rgba(255,255,255,0.08);
+    }
+  }
+
+  // Reader navigation buttons
+  .reader-nav-btn {
+    border-radius: @radius-sm !important;
+    font-weight: 600 !important;
+    font-size: 0.88rem !important;
+    padding: 0 20px !important;
+    height: 40px !important;
+    line-height: 40px !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &.uk-button-default {
+      background: rgba(255,255,255,0.08);
+      color: #ccc;
+      border: 1px solid rgba(255,255,255,0.12);
+
+      &:hover {
+        background: rgba(255,255,255,0.14);
+        color: #fff;
+        border-color: rgba(255,255,255,0.2);
+      }
+    }
+
+    &.uk-button-primary {
+      background: @accent-gradient !important;
+      border: none !important;
+      color: #fff !important;
+      box-shadow: 0 4px 14px rgba(102, 126, 234, 0.3);
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
+      }
+    }
+
+    &.uk-button-danger, &.reader-exit-btn {
+      background: linear-gradient(135deg, #ef5350, #e53935) !important;
+      border: none !important;
+      color: #fff !important;
+      box-shadow: 0 4px 14px rgba(239, 83, 80, 0.25);
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(239, 83, 80, 0.35) !important;
+      }
+    }
+  }
+
+  // Next button at bottom of continuous mode
+  #next-btn {
+    border-radius: @radius-md !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    padding: 0 32px !important;
+    height: 48px !important;
+    line-height: 48px !important;
+    background: @accent-gradient !important;
+    border: none !important;
+    color: #fff !important;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 24px;
+    margin-bottom: 24px;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4) !important;
+    }
+  }
+
+  // Progress bar in modal
+  .progress-text {
+    font-weight: 600;
+    color: #ccc;
+    font-size: 0.92rem;
+  }
+
+  // Image click zones (paged mode)
+  .click-zone {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    height: 100%;
+    cursor: pointer;
+
+    &.click-left {
+      left: 0;
+      width: 30%;
+    }
+    &.click-right {
+      right: 0;
+      width: 30%;
+    }
+  }
+}
+
+// --- Reader Error Modal ---
+.error-modal .uk-modal-dialog {
+  border-radius: @radius-lg;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+
+  .uk-modal-header {
+    padding: 24px 28px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    background: #fafafa;
+
+    .uk-modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #c62828;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+
+  .uk-modal-body {
+    padding: 20px 28px;
+  }
+
+  .error-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+}
+
+// --- Tag Pills ---
+.tag-pill {
+  display: inline-block;
+  margin: 0 6px 10px 0;
+  border-radius: 20px;
+  background: rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(102, 126, 234, 0.15);
+  transition: all 0.25s ease;
+  overflow: hidden;
+
+  a {
+    display: inline-block;
+    padding: 6px 16px;
+    color: @accent-start !important;
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-decoration: none;
+    text-transform: none;
+  }
+
+  &:hover {
+    background: @accent-gradient;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+    transform: translateY(-1px);
+
+    a {
+      color: #fff !important;
+    }
+  }
+}
+
+// --- Admin Panel ---
+.admin-panel {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.admin-card {
+  background: #fff;
+  border-radius: @radius-md;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: @shadow-sm;
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: #333;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: @shadow-md;
+    border-color: rgba(102, 126, 234, 0.15);
+  }
+
+  .admin-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: @radius-sm;
+    background: rgba(102, 126, 234, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: @accent-start;
+    font-size: 18px;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  &:hover .admin-card-icon {
+    background: @accent-gradient;
+    color: #fff;
+  }
+
+  .admin-card-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .admin-card-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #333;
+    margin: 0;
+  }
+
+  .admin-card-meta {
+    font-size: 0.82rem;
+    color: #999;
+    margin: 2px 0 0;
+  }
+
+  .admin-card-badge {
+    background: linear-gradient(135deg, #ef5350, #e53935);
+    color: #fff;
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(239, 83, 80, 0.25);
+    flex-shrink: 0;
+  }
+
+  .admin-card-right {
+    flex-shrink: 0;
+    text-align: right;
+  }
+}
+
+// Admin theme row
+.admin-theme-row {
+  .admin-card {
+    cursor: default;
+
+    &:hover {
+      transform: none;
+    }
+  }
+
+  .sort-select {
+    max-width: 160px;
+  }
+}
+
+// Admin footer
+.admin-footer {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  .admin-version {
+    font-size: 0.85rem;
+    color: #999;
+
+    a {
+      color: @accent-start;
+    }
+  }
+}
+
+// --- Totop button ---
+#totop-wrapper {
+  a {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: @accent-gradient;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    color: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(102, 126, 234, 0.4);
+    }
+
+    svg { color: #fff; }
+  }
+}
+
+// ============================================
+// Dark Theme Overrides (unified)
+// ============================================
+.uk-light {
+  // Original dark theme rules
+  .uk-modal-header,
+  .uk-modal-body,
+  .uk-modal-footer {
+    background: #222;
+  }
+  .uk-navbar-dropdown,
+  .uk-dropdown {
+    color: #ccc;
+    background: #333;
+  }
+  .uk-nav-header,
+  .uk-description-list > dt {
+    color: #555;
+  }
+
+  // Navbar
+  .mango-navbar {
+    background: rgba(30,30,50,0.85) !important;
+    border-bottom-color: rgba(255,255,255,0.06);
+
+    .uk-navbar-nav > li > a {
+      color: #ccc;
+      &:hover, &:focus { color: #8b9cf7; }
+    }
+    .uk-navbar-nav > li.uk-active > a {
+      color: #8b9cf7;
+    }
+    .uk-navbar-right .uk-navbar-nav > li > a {
+      color: #999;
+    }
+    .uk-navbar-toggle { color: #ccc; }
+    .uk-logo img { opacity: 0.9; }
+  }
+
+  // Mobile offcanvas
+  #mobile-nav .uk-offcanvas-bar {
+    background: #1e1e2e;
+
+    .uk-nav-primary > li > a {
+      color: #ccc;
+      &:hover {
+        background: rgba(102, 126, 234, 0.12);
+        color: #8b9cf7;
+      }
+    }
+    .uk-close { color: #aaa; }
+  }
+
+  // Page headings
+  .page-heading {
+    color: #eee;
+  }
+  .page-subtitle {
+    color: #666;
+  }
+
+  // Section headings
+  .section-heading {
+    color: #ddd;
+  }
+
+  // Section header row dark
+  .section-header {
+    .section-count {
+      background: rgba(102, 126, 234, 0.12);
+      color: #888;
+    }
+    .section-link {
+      color: #8b9cf7;
+      &:hover { color: #a8b4f7; }
+    }
+  }
+
+  // Home page dark
+  .home-page {
+    // uses inherited dark styles
+  }
+
+  // Library page dark
+  .library-page {
+    .no-results {
+      .no-results-icon {
+        background: rgba(102, 126, 234, 0.15);
+        color: #8b9cf7;
+      }
+      h3 { color: #ddd; }
+      p { color: #888; }
+    }
+  }
+
+  // Page heading badge dark
+  .page-heading-badge {
+    background: rgba(102, 126, 234, 0.12);
+    color: #888;
+  }
+
+  // Empty states
+  .empty-state {
+    h2 { color: #eee; }
+    p { color: #888; }
+
+    dl {
+      background: rgba(255,255,255,0.04);
+
+      dt { color: #aaa; }
+      dd { color: #ccc;
+        code {
+          background: rgba(102, 126, 234, 0.15);
+          color: #8b9cf7;
+        }
+      }
+    }
+  }
+
+  // Search
+  .search-input {
+    border-color: #333 !important;
+    background: rgba(255,255,255,0.05) !important;
+    color: #eee !important;
+
+    &:focus {
+      border-color: @accent-start !important;
+    }
+    &::placeholder { color: #555; }
+  }
+
+  .search-icon { color: #666; }
+
+  // Sort
+  .sort-select {
+    border-color: #333 !important;
+    background: rgba(255,255,255,0.05) !important;
+    color: #eee !important;
+
+    &:focus {
+      border-color: @accent-start !important;
+    }
+  }
+
+  // Cards
+  .item .uk-card.uk-card-default {
+    background: #1e1e2e;
+    border-color: rgba(255,255,255,0.06);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+
+    &:hover {
+      box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+    }
+  }
+
+  .item .uk-card .uk-card-body {
+    .uk-card-title { color: #ddd; }
+    .uk-text-meta { color: #777; }
+  }
+
+  // Tag pills
+  .tag-pill {
+    background: rgba(102, 126, 234, 0.12);
+    border-color: rgba(102, 126, 234, 0.2);
+
+    a { color: #8b9cf7 !important; }
+
+    &:hover {
+      a { color: #fff !important; }
+    }
+  }
+
+  // Admin cards
+  .admin-card {
+    background: #1e1e2e;
+    border-color: rgba(255,255,255,0.06);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    color: #ccc;
+
+    &:hover {
+      border-color: rgba(102, 126, 234, 0.2);
+    }
+
+    .admin-card-icon {
+      background: rgba(102, 126, 234, 0.15);
+      color: #8b9cf7;
+    }
+
+    &:hover .admin-card-icon {
+      background: @accent-gradient;
+      color: #fff;
+    }
+
+    .admin-card-title { color: #ddd; }
+    .admin-card-meta { color: #777; }
+  }
+
+  // Admin footer
+  .admin-footer {
+    border-top-color: #333;
+
+    .admin-version { color: #666; }
+  }
+
+  // Buttons
+  .mango-btn-outline:hover {
+    background: rgba(102, 126, 234, 0.12) !important;
+  }
+
+  .mango-btn-danger {
+    box-shadow: 0 4px 14px rgba(239, 83, 80, 0.2);
+  }
+
+  // Admin badge
+  .admin-card-badge {
+    box-shadow: 0 2px 8px rgba(239, 83, 80, 0.2);
+  }
+
+  // Totop
+  #totop-wrapper a {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  }
+
+  // Breadcrumbs
+  .breadcrumb-nav .uk-breadcrumb {
+    li a { color: #777; }
+    li.uk-disabled a { color: #ccc; }
+    > :nth-child(n+2)::before { color: #444; }
+  }
+
+  // Title heading
+  .title-heading {
+    color: #eee;
+
+    .uk-icon-button {
+      background: rgba(102, 126, 234, 0.15);
+      color: #8b9cf7;
+
+      &:hover {
+        background: @accent-gradient;
+        color: #fff;
+      }
+    }
+  }
+
+  // Select bar
+  #select-bar {
+    border-color: rgba(255, 165, 0, 0.35) !important;
+    background: rgba(255, 165, 0, 0.04) !important;
+  }
+
+  // Tag select2 dark theme
+  .tag-select-wrapper {
+    .select2-container--default {
+      .select2-selection--multiple {
+        border-color: #333;
+        background: rgba(255,255,255,0.05);
+
+        .select2-selection__choice {
+          background: rgba(102, 126, 234, 0.15);
+          color: #8b9cf7;
+          border-color: rgba(102, 126, 234, 0.25);
+        }
+
+        .select2-selection__choice__remove,
+        .select2-selection__choice__remove:hover {
+          color: #8b9cf7;
+        }
+
+        .select2-search__field {
+          color: #aaa;
+        }
+      }
+
+      &.select2-container--focus .select2-selection--multiple {
+        border-color: @accent-start;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+      }
+    }
+
+    .select2-dropdown {
+      border-color: #333;
+      background: #1e1e2e;
+    }
+  }
+
+  // Modals dark
+  .mango-modal .uk-modal-dialog {
+    .uk-modal-header {
+      background: #1a1a2e;
+      border-bottom-color: rgba(255,255,255,0.06);
+    }
+    .uk-modal-title { color: #eee; }
+    .uk-modal-body { background: #16162a; }
+    .uk-modal-footer {
+      background: #1a1a2e;
+      border-top-color: rgba(255,255,255,0.06);
+    }
+    .uk-form-label { color: #aaa; }
+    .uk-input, .uk-select {
+      border-color: #333;
+      background: rgba(255,255,255,0.05);
+      color: #ddd;
+
+      &:focus {
+        border-color: @accent-start;
+      }
+    }
+    .modal-section-label { color: #666; }
+  }
+
+  // Error modal dark
+  .error-modal .uk-modal-dialog {
+    .uk-modal-header {
+      background: #1a1a2e;
+      border-bottom-color: rgba(255,255,255,0.06);
+      .uk-modal-title { color: #ef5350; }
+    }
+    .uk-modal-body { background: #16162a; }
+  }
+
+  // Reader page dark (already dark, but ensure overrides)
+  .reader-page {
+    .reader-modal .uk-modal-dialog {
+      .uk-select option {
+        background: #0e0e1e;
+      }
+    }
+  }
+
+  // Tables dark
+  .mango-table {
+    border-color: #333;
+
+    thead th {
+      background: #1a1a2e;
+      color: #999;
+      border-bottom-color: #333;
+    }
+
+    tbody td {
+      border-bottom-color: rgba(255,255,255,0.04);
+      color: #ccc;
+    }
+
+    tbody tr:hover {
+      background: rgba(102, 126, 234, 0.06);
+    }
+
+    &.mango-table-striped tbody tr:nth-child(even) {
+      background: rgba(255,255,255,0.03);
+      &:hover { background: rgba(102, 126, 234, 0.08); }
+    }
+  }
+
+  // Table action icons dark
+  .table-action {
+    color: #999;
+    &:hover { color: #8b9cf7; background: rgba(102, 126, 234, 0.12); }
+    &.table-action-danger:hover { color: #ef5350; background: rgba(239, 83, 80, 0.12); }
+    &.table-action-success:hover { color: #66bb6a; background: rgba(76, 175, 80, 0.12); }
+  }
+
+  // Status labels dark
+  .status-label {
+    &.status-pending { background: rgba(255, 193, 7, 0.15); color: #ffd54f; }
+    &.status-success { background: rgba(76, 175, 80, 0.15); color: #66bb6a; }
+    &.status-danger { background: rgba(239, 83, 80, 0.15); color: #ef5350; }
+    &.status-warning { background: rgba(255, 152, 0, 0.15); color: #ffa726; }
+  }
+
+  // Action bar dark
+  .action-bar .mango-btn-sm {
+    &.mango-btn-outline {
+      color: #aaa !important;
+      border-color: #444 !important;
+      &:hover { color: #8b9cf7 !important; border-color: #8b9cf7 !important; background: rgba(102, 126, 234, 0.1) !important; }
+    }
+  }
+
+  // Modern form dark
+  .mango-form {
+    .uk-form-label { color: #aaa; }
+    .uk-input, .uk-select {
+      border-color: #333;
+      background: rgba(255,255,255,0.05);
+      color: #ddd;
+      &:focus { border-color: @accent-start; }
+      &::placeholder { color: #555; }
+    }
+    .form-divider { border-top-color: #333; }
+    .form-password-toggle .pw-toggle {
+      color: #666;
+      &:hover { color: #8b9cf7; background: rgba(102, 126, 234, 0.12); }
+    }
+  }
+
+  // Plugin select dark
+  .plugin-select {
+    border-color: #333 !important;
+    background: rgba(255,255,255,0.05) !important;
+    color: #ddd !important;
+    &:focus { border-color: @accent-start !important; }
+  }
+
+  // Sub empty state dark
+  .sub-empty-state {
+    .sub-empty-icon { background: rgba(102, 126, 234, 0.15); color: #8b9cf7; }
+    h3 { color: #ddd; }
+    p { color: #888;
+      code { background: rgba(102, 126, 234, 0.15); color: #8b9cf7; }
+      a { color: #8b9cf7; }
+    }
+  }
+
+  // Subscription detail DL dark
+  .sub-detail-dl {
+    dt { color: #777; }
+    dd { color: #ccc; }
+  }
+
+  // Chapter search input dark
+  .chapter-search-input {
+    border-color: #333 !important;
+    background: rgba(255,255,255,0.05) !important;
+    color: #ddd !important;
+    &:focus { border-color: @accent-start !important; }
+    &::placeholder { color: #555; }
+  }
+
+  // Accent text utility dark
+  .mango-accent {
+    color: #8b9cf7;
+  }
+
+  // Info toggle dark
+  .info-toggle {
+    color: #777;
+    &:hover { color: #8b9cf7; background: rgba(102, 126, 234, 0.12); }
+  }
+
+  // Filter form dark
+  .filter-form {
+    background: rgba(255,255,255,0.03);
+    border-color: #333;
+    .uk-form-label { color: #aaa; }
+    .uk-input, .uk-select {
+      border-color: #333;
+      background: rgba(255,255,255,0.05);
+      color: #ddd;
+      &:focus { border-color: @accent-start; }
+    }
+  }
+
+  // Change password btn dark
+  .change-pw-btn {
+    color: #8b9cf7 !important;
+    border-color: rgba(102, 126, 234, 0.3) !important;
+    &:hover { background: rgba(102, 126, 234, 0.1) !important; border-color: #8b9cf7 !important; }
+  }
+}
+
+// ============================================
+// Tables (modernized)
+// ============================================
+.mango-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: @radius-md;
+  overflow: hidden;
+  border: 1px solid #e8e8e8;
+
+  thead {
+    th {
+      background: #f7f7fa;
+      font-weight: 600;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #666;
+      padding: 12px 16px;
+      border-bottom: 2px solid #e8e8e8;
+      white-space: nowrap;
+    }
+  }
+
+  tbody {
+    td {
+      padding: 12px 16px;
+      font-size: 0.92rem;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background: rgba(102, 126, 234, 0.03);
+    }
+  }
+
+  // Striped variant
+  &.mango-table-striped tbody tr:nth-child(even) {
+    background: #fafafa;
+
+    &:hover {
+      background: rgba(102, 126, 234, 0.06);
+    }
+  }
+}
+
+// --- Table action icons ---
+.table-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: @radius-sm;
+  color: #888;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    color: @accent-start;
+    background: rgba(102, 126, 234, 0.08);
+    transform: scale(1.1);
+  }
+
+  &.table-action-danger:hover {
+    color: #ef5350;
+    background: rgba(239, 83, 80, 0.08);
+  }
+
+  &.table-action-success:hover {
+    color: #4caf50;
+    background: rgba(76, 175, 80, 0.08);
+  }
+}
+
+// --- Status Labels ---
+.status-label {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+
+  &.status-pending {
+    background: rgba(255, 193, 7, 0.12);
+    color: #f9a825;
+  }
+  &.status-success {
+    background: rgba(76, 175, 80, 0.12);
+    color: #43a047;
+  }
+  &.status-danger {
+    background: rgba(239, 83, 80, 0.12);
+    color: #e53935;
+  }
+  &.status-warning {
+    background: rgba(255, 152, 0, 0.12);
+    color: #ef6c00;
+  }
+}
+
+// --- Admin Sub-Page Layout ---
+.admin-sub-page {
+  h2.page-heading {
+    margin-bottom: 4px;
+  }
+  .page-subtitle {
+    margin-bottom: 24px;
+  }
+}
+
+// --- Action Bar (for tables with buttons above) ---
+.action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+  align-items: center;
+
+  .mango-btn-sm {
+    &.mango-btn-outline {
+      background: transparent !important;
+      color: #555 !important;
+      border: 1px solid #ddd !important;
+
+      &:hover {
+        color: @accent-start !important;
+        border-color: @accent-start !important;
+        background: rgba(102, 126, 234, 0.06) !important;
+      }
+    }
+
+    &.mango-btn-danger {
+      background: linear-gradient(135deg, #ef5350, #e53935) !important;
+      color: #fff !important;
+      border: none !important;
+      box-shadow: 0 2px 8px rgba(239, 83, 80, 0.2);
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(239, 83, 80, 0.3) !important;
+      }
+    }
+  }
+}
+
+// --- Modern Form (user-edit) ---
+.mango-form {
+  max-width: 480px;
+
+  .uk-form-label {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: #555;
+    letter-spacing: 0.01em;
+    margin-bottom: 6px;
+  }
+
+  .uk-input, .uk-select {
+    border-radius: @radius-sm;
+    border: 2px solid #e8e8e8;
+    height: 44px;
+    font-size: 0.95rem;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+
+    &:focus {
+      border-color: @accent-start;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12);
+      outline: none;
+    }
+
+    &::placeholder {
+      color: #bbb;
+    }
+  }
+
+  .uk-checkbox {
+    accent-color: @accent-start;
+    width: 20px;
+    height: 20px;
+  }
+
+  .form-divider {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 24px 0;
+  }
+
+  .form-password-toggle {
+    position: relative;
+
+    .uk-input {
+      padding-right: 48px !important;
+    }
+
+    .pw-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #999;
+      padding: 4px;
+      line-height: 1;
+      z-index: 1;
+      transition: color 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      width: 32px;
+      border-radius: 6px;
+
+      &:hover {
+        color: @accent-start;
+        background: rgba(102, 126, 234, 0.08);
+      }
+
+      &:focus-visible {
+        outline: 2px solid @accent-start;
+        outline-offset: 2px;
+      }
+    }
+  }
+}
+
+// --- Plugin Select Dropdown ---
+.plugin-select {
+  border-radius: @radius-sm !important;
+  border: 2px solid #e8e8e8 !important;
+  height: 44px !important;
+  font-size: 0.95rem !important;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+
+  &:focus {
+    border-color: @accent-start !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12) !important;
+    outline: none;
+  }
+}
+
+// --- Empty State for Sub-pages ---
+.sub-empty-state {
+  text-align: center;
+  padding: 48px 20px;
+
+  .sub-empty-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    background: rgba(102, 126, 234, 0.1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: @accent-start;
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: #888;
+    font-size: 0.92rem;
+    max-width: 380px;
+    margin: 0 auto;
+    line-height: 1.6;
+
+    code {
+      background: rgba(102, 126, 234, 0.1);
+      color: @accent-start;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    a {
+      color: @accent-start;
+      font-weight: 500;
+    }
+  }
+}
+
+// --- Subscription detail modal DL ---
+.sub-detail-dl {
+  dt {
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: 12px;
+
+    &:first-child { margin-top: 0; }
+  }
+  dd {
+    font-size: 0.92rem;
+    color: #333;
+    margin: 4px 0 0;
+  }
+}
+
+// --- Chapter search input (plugin-download) ---
+.chapter-search-input {
+  border-radius: @radius-sm !important;
+  border: 2px solid #e8e8e8 !important;
+  height: 44px !important;
+  font-size: 0.95rem !important;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+
+  &:focus {
+    border-color: @accent-start !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12) !important;
+    outline: none;
+  }
+
+  &::placeholder {
+    color: #bbb;
+  }
+}
+
+// --- Accent text utility ---
+.mango-accent {
+  color: @accent-start;
+}
+
+// --- Info toggle icon ---
+.info-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: @radius-sm;
+  color: #888;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  // Inline info icons that are smaller
+  &.info-toggle-sm {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    color: @accent-start;
+    background: rgba(102, 126, 234, 0.08);
+  }
+}
+
+// --- Filter form ---
+.filter-form {
+  background: #f7f7fa;
+  border-radius: @radius-md;
+  padding: 20px;
+  border: 1px solid #e8e8e8;
+  margin-bottom: 16px;
+
+  .uk-form-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #555;
+  }
+
+  .uk-input, .uk-select {
+    border-radius: @radius-sm;
+    border: 2px solid #e8e8e8;
+    height: 40px;
+    font-size: 0.9rem;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+
+    &:focus {
+      border-color: @accent-start;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12);
+      outline: none;
+    }
+  }
+}
+
+// --- Change password toggle button ---
+.change-pw-btn {
+  border-radius: @radius-sm !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  padding: 0 18px !important;
+  height: 38px !important;
+  line-height: 38px !important;
+  color: @accent-start !important;
+  border: 1px solid rgba(102, 126, 234, 0.25) !important;
+  background: transparent !important;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(102, 126, 234, 0.06) !important;
+    border-color: @accent-start !important;
+  }
 }
 
 // Misc

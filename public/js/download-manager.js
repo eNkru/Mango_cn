@@ -94,21 +94,23 @@ const component = () => {
 					this.toggling = false;
 				});
 		},
-		statusClass(status) {
-			let cls = 'label ';
+		statusLabelClass(status) {
+			let cls = 'status-label ';
 			switch (status) {
 				case 'Pending':
-					cls += 'label-pending';
+					cls += 'status-pending';
 					break;
 				case 'Completed':
-					cls += 'label-success';
+					cls += 'status-success';
 					break;
 				case 'Error':
-					cls += 'label-danger';
+					cls += 'status-danger';
 					break;
 				case 'MissingPages':
-					cls += 'label-warning';
+					cls += 'status-warning';
 					break;
+				default:
+					cls += 'status-pending';
 			}
 			return cls;
 		}
