@@ -134,6 +134,6 @@ docker run -d \
 
 ## 🔑 Default Credentials (auto-created on first run)
 - **Username**: `admin`
-- **Password**: `9935fd34973f4403b91c24e57bcbf849`
+- **Password**: _(removed for security — check server log on first run)_
 - **Config file**: `~/.config/mango/config.yml`
 - **Port**: 9000
