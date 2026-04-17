@@ -64,7 +64,7 @@ struct APIRouter
     Koa.schema "filter", {
       "key"   => String,
       "type"  => String,
-      "value" => String | Int32 | Int64 | Float32,
+      "value" => String,
     }
 
     Koa.schema "subscription", {

@@ -10,9 +10,9 @@ class ArchiveEntry < Entry
   def initialize(@zip_path, @book)
     storage = Storage.default
     @path = @zip_path
-    @encoded_path = URI.encode @zip_path
+    @encoded_path = URI.encode_path @zip_path
     @title = File.basename @zip_path, File.extname @zip_path
-    @encoded_title = URI.encode @title
+    @encoded_title = URI.encode_path @title
     @size = (File.size @zip_path).humanize_bytes
     id = storage.get_entry_id @zip_path, File.signature(@zip_path)
     if id.nil?

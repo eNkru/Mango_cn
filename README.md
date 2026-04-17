@@ -1,43 +1,121 @@
+# Mango (Chinese Regional Fork)
+
 ![banner-paddings](https://user-images.githubusercontent.com/38988286/199423262-68f03906-5444-499c-8616-aa675039544e.png)
 
+This repository is a customized fork of [getmango/Mango](https://github.com/getmango/Mango). It has been tailored for local deployment in regions with restricted access to public CDNs, optimized for Synology NAS environments, and translated into Chinese. 
 
-# Mango
+Mango is a self-hosted manga server and web-based reader. 
 
-This repo is a fork of getmango/Mango , those things i've done was translated this repo into chinese .and fix the access permissions of the manga folder on synology nas. also packed a synology  spk package ,you can direct install it through package center .
+## ✨ Features
 
+- **Multi-user support**: Manage multiple users with customized permissions and preferences.
+- **OPDS support**: Connect with external manga readers and applications easily.
+- **Theme customization**: Built-in dark/light mode toggle.
+- **Support for multiple format files**: Seamlessly handle `.cbz`, `.zip`, `.cbr`, and `.rar` formats.
+- **Organized library**: Supports nested folders for structural organization within your library.
+- **Smart resume**: Automatically preserves reading progress for each user.
+- **Thumbnail generation**: Beautiful grid display with generated cover thumbnails.
+- **Plugin system**: Support downloading from third-party websites with plugins.
+- **Responsive Web Reader**: Enjoy responsive viewing across all devices (desktop, tablet, mobile), without the need for a dedicated app.
+- **Pain-free deployment**: All static assets are embedded within a single binary. 
 
-原仓库地址：https://github.com/getmango/Mango
-该版本为Mango的汉化版，并且将原版中从cnd中获取js脚本改到本地，以方便大陆用户使用，修复docker版在群晖上的权限问题，并打包了群晖spk套件版。
+### 🌟 Fork-Specific Features
+- Fully translated to Chinese.
+- JS frontend dependencies are localized (removed external CDN reliance for mainland users).
+- Fixed Docker file permission limitations in Synology NAS environments.
+- Packed easily installable Synology SPK (install directly via Package Center).
 
-docker版需要将漫画文件夹挂载到/root/mango/library
+---
 
-[<img src="https://img.shields.io/docker/pulls/dezhao/mango_cn.svg">](https://hub.docker.com/r/dezhao/mango_cn/)
-[![IC](https://github.com/uparrows/mango_cn/actions/workflows/docker-mango.yml/badge.svg?branch=main)](https://github.com/uparrows/mango_cn/actions/workflows/docker-mango.yml)
+## 🛠️ How to Develop
 
-芒果是一个自托管的漫画服务器和阅读器。它的功能包括
+Mango is primarily built in [Crystal](https://crystal-lang.org/) and utilizes the Kemal web framework, backed by SQLite3. The frontend utilizes Node.js and Gulp for asset processing.
 
-多用户支持
-OPDS 支持
-暗/亮模式开关
-支持的格式：.cbz.zip.cbr.rar
-支持库中的嵌套文件夹
-自动存储阅读进度
-缩略图生成
-支持从第三方网站下载插件
-网络阅读器响应迅速，在移动设备上运行良好，因此不需要移动应用程序
-所有静态文件都嵌入在二进制文件中，因此部署过程简单无痛
-请查看维基以获取更多信息。
+### Prerequisites
+- **Crystal `1.0.0` or higher & Shards** (macOS: `brew install crystal`, Ubuntu/Debian: `sudo snap install crystal --classic`)
+- **Node.js & Yarn** (macOS: `brew install node yarn`)
+- **Required system libraries** (e.g., `libarchive`, `sqlite3`, and `wget`. macOS: `brew install libarchive sqlite3 wget`)
 
-![01](https://user-images.githubusercontent.com/38988286/199410588-535b4fa4-4db8-4a33-919f-7a321a93628b.jpg)
+### Development Steps
+1. Clone the repository and navigate into the directory.
+2. Initialize and compile the frontend assets:
+   ```bash
+   make setup
+   ```
+   (This runs `yarn` install and the gulp development task).
+3. To start the application in development mode:
+   ```bash
+   make run
+   ```
+4. Testing & linting:
+   - Run tests: `make test` (Executes `crystal spec`)
+   - Check formatting and linting: `make check` (Executes `crystal tool format` and `ameba`)
 
-![02](https://user-images.githubusercontent.com/38988286/199411029-3af1f388-c817-424a-a591-f42d0e8e4e5a.jpg)
+---
 
-![03](https://user-images.githubusercontent.com/38988286/199411040-5cb37266-aa00-47ca-9d68-4e34b24b0a5e.jpg)
+## 📦 How to Build
 
-![04](https://user-images.githubusercontent.com/38988286/199411046-6f9047d9-1c24-4be7-9c1c-b6ca0010f08a.jpg)
+Building Mango is simplified by the provided `Makefile`.
 
-![04_5](https://user-images.githubusercontent.com/38988286/199411087-34d3eb7a-f408-4964-b2e3-91f6e215fbfc.jpg)
+1. **Install Shards (Crystal dependencies):**
+   ```bash
+   make libs
+   ```
+2. **Build frontend UI assets:**
+   ```bash
+   make uglify
+   ```
+3. **Build the standard binary:**
+   ```bash
+   make build
+   ```
+   *This compiles `src/mango.cr` and produces the `mango` binary executable.*
 
-![05](https://user-images.githubusercontent.com/38988286/199411060-0e4120d3-aa38-4d99-9224-24cc91847bf9.jpg)
+**Note:** For a fully standalone statically linked binary, you can run `make static`.
+For ARM architectures:
+- 32-bit ARM: `make arm32v7`
+- 64-bit ARM: `make arm64v8`
 
+---
 
+## 🚀 How to Deploy
+
+The simplest and recommended way to deploy Mango is using Docker or via Synology NAS Manager. All static assets (HTML/CSS/JS) are bundled inside the compiled binary. 
+
+### Using Docker
+
+We provide a pre-built image optimized with local file handling and permissions intact. 
+
+1. **Pull the latest image**:
+   ```bash
+   docker pull dezhao/mango_cn
+   ```
+2. **Run the container**:
+   Ensure you mount your manga library containing your archive files to `/root/mango/library` within the container.
+   ```bash
+   docker run -d \\
+     -p 9000:9000 \\
+     -v /path/to/your/manga:/root/mango/library \\
+     -v /path/to/mango/config:/root/mango/config \\
+     --name manga-server \\
+     dezhao/mango_cn
+   ```
+
+*Or use the included `docker-compose.yml` for convenience!*
+
+### Synology NAS Direct Installation
+Since this fork is heavily optimized for Synology devices, you can install the packaged `.spk` application directly via the Synology Package Center instead of using Docker manually.
+
+---
+
+## 🛠️ Troubleshooting
+
+### 'ameba' failed to compile during `make setup` / `make libs`
+If you see an error like `Error: type must be Ameba::Severity, not (Ameba::Severity | Nil)` during dependency installation:
+- **Solution**: The `ameba` linter may be incompatible with newer versions of Crystal. This has now been moved to `development_dependencies` in `shard.yml` so that it is ignored during production builds. 
+- Ensure you have the updated `shard.yml` from this repository.
+- If you're encountering the error from a stale cache, run the following commands to clean the lock file and reinstall:
+  ```bash
+  shards install
+  make setup
+  ```

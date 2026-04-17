@@ -100,7 +100,7 @@ abstract class Entry
   end
 
   def encoded_display_name
-    URI.encode display_name
+    URI.encode_path display_name
   end
 
   def cover_url
