@@ -4,23 +4,58 @@
   <% page = "登录" %>
   <%= render_component "head" %>
 
-  <body>
-    <div class="uk-section uk-flex uk-flex-middle uk-animation-fade" uk-height-viewport="">
+  <body class="login-page">
+    <!-- Animated background orbs -->
+    <div class="login-orbs" aria-hidden="true">
+      <div class="login-orb login-orb-1"></div>
+      <div class="login-orb login-orb-2"></div>
+      <div class="login-orb login-orb-3"></div>
+    </div>
+
+    <div class="uk-section uk-flex uk-flex-middle" uk-height-viewport="">
       <div class="uk-width-1-1">
         <div class="uk-container">
           <div class="uk-grid-margin uk-grid uk-grid-stack" uk-grid="">
             <div class="uk-width-1-1@m">
-              <div class="uk-margin uk-width-large uk-margin-auto uk-card uk-card-default uk-card-body uk-box-shadow-large">
-                <h3 class="uk-card-title uk-text-center">登录</h3>
-                <form action="<%= base_url %>login" method="post">
-                  <div class="uk-margin">
-                    <div class="uk-inline uk-width-1-1"><span class="uk-form-icon" uk-icon="icon:user"></span><input class="uk-input uk-form-large" type="text" name="username"></div>
+              <div class="login-card uk-margin uk-width-large uk-margin-auto uk-card uk-card-default uk-card-body uk-box-shadow-large">
+                <!-- Gradient accent stripe -->
+                <div class="login-stripe" aria-hidden="true"></div>
+
+                <div class="login-header uk-text-center">
+                  <div class="login-logo">
+                    <span uk-icon="icon:thumbnails; ratio: 2.5"></span>
                   </div>
-                  <div class="uk-margin">
-                    <div class="uk-inline uk-width-1-1"><span class="uk-form-icon" uk-icon="icon:lock"></span><input class="uk-input uk-form-large" type="password" name="password"></div>
+                  <h3 class="uk-card-title">欢迎回来</h3>
+                  <p class="login-subtitle">登录到 Mango</p>
+                </div>
+                <form class="login-form" id="loginForm" action="<%= base_url %>login" method="post">
+                  <div class="login-field">
+                    <label class="login-label" for="username">用户名</label>
+                    <div class="uk-inline uk-width-1-1">
+                      <span class="uk-form-icon login-form-icon" uk-icon="icon:user"></span>
+                      <input class="uk-input uk-form-large login-input" id="username" type="text" name="username" autocomplete="username" placeholder="请输入用户名" required>
+                    </div>
                   </div>
-                  <div class="uk-margin"><button class="uk-button uk-button-primary uk-button-large uk-width-1-1">登录</button></div>
+                  <div class="login-field">
+                    <label class="login-label" for="password">密码</label>
+                    <div class="uk-inline uk-width-1-1">
+                      <span class="uk-form-icon login-form-icon" uk-icon="icon:lock"></span>
+                      <input class="uk-input uk-form-large login-input" id="password" type="password" name="password" autocomplete="current-password" placeholder="请输入密码" required>
+                      <button type="button" class="login-toggle-pw" id="togglePassword" aria-label="切换密码可见性">
+                        <i class="login-eye-icon fas fa-eye-slash" id="eyeIcon"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="login-field login-field-btn">
+                    <button class="uk-button uk-button-primary uk-button-large uk-width-1-1 login-btn" type="submit" id="loginBtn">
+                      <span class="login-btn-text">登录</span>
+                      <span class="login-btn-spinner" hidden><i class="fas fa-circle-notch fa-spin"></i></span>
+                    </button>
+                  </div>
                 </form>
+              </div>
+              <div class="login-footer uk-text-center">
+                <p>Mango · 漫画服务器</p>
               </div>
             </div>
           </div>
@@ -29,6 +64,43 @@
     </div>
     <script>
       setTheme();
+
+      // Password show/hide toggle
+      const toggleBtn = document.getElementById('togglePassword');
+      const passwordInput = document.getElementById('password');
+      const eyeIcon = document.getElementById('eyeIcon');
+      if (toggleBtn && passwordInput) {
+        toggleBtn.addEventListener('click', function () {
+          const isPassword = passwordInput.type === 'password';
+          passwordInput.type = isPassword ? 'text' : 'password';
+          eyeIcon.className = isPassword ? 'login-eye-icon fas fa-eye' : 'login-eye-icon fas fa-eye-slash';
+        });
+      }
+
+      // Form submit loading state
+      const loginForm = document.getElementById('loginForm');
+      const loginBtn = document.getElementById('loginBtn');
+      if (loginForm && loginBtn) {
+        loginForm.addEventListener('submit', function () {
+          const text = loginBtn.querySelector('.login-btn-text');
+          const spinner = loginBtn.querySelector('.login-btn-spinner');
+          if (text && spinner) {
+            text.hidden = true;
+            spinner.hidden = false;
+            loginBtn.disabled = true;
+            loginBtn.style.opacity = '0.8';
+          }
+        });
+      }
+
+      // Input focus → icon color transition
+      document.querySelectorAll('.login-input').forEach(function (input) {
+        const icon = input.closest('.uk-inline').querySelector('.login-form-icon');
+        if (icon) {
+          input.addEventListener('focus', function () { icon.classList.add('login-form-icon-active'); });
+          input.addEventListener('blur', function () { icon.classList.remove('login-form-icon-active'); });
+        }
+      });
     </script>
     <%= render_component "uikit" %>
   </body>
