@@ -1,16 +1,16 @@
 version: 2.0
 shards:
-  ameba:
-    git: https://github.com/crystal-ameba/ameba.git
-    version: 0.14.3
-
   archive:
     git: https://github.com/hkalexling/archive.cr.git
     version: 0.5.0
 
+  backtracer:
+    git: https://github.com/sija/backtracer.cr.git
+    version: 1.2.4
+
   baked_file_system:
     git: https://github.com/schovi/baked_file_system.git
-    version: 0.10.0
+    version: 0.13.0
 
   clim:
     git: https://github.com/at-grandpa/clim.git
@@ -18,35 +18,31 @@ shards:
 
   db:
     git: https://github.com/crystal-lang/crystal-db.git
-    version: 0.10.1
+    version: 0.14.0
 
   duktape:
     git: https://github.com/jessedoyle/duktape.cr.git
-    version: 1.0.0
+    version: 1.1.0
 
   exception_page:
     git: https://github.com/crystal-loot/exception_page.git
-    version: 0.1.5
+    version: 0.5.0
 
   http_proxy:
     git: https://github.com/mamantoha/http_proxy.git
-    version: 0.8.0
+    version: 0.14.0
 
   image_size:
-    git: https://github.com/hkalexling/image_size.cr.git
-    version: 0.5.0
+    git: https://github.com/enkru/image_size.cr.git
+    version: 0.5.0+git.commit.a9b5237553a39232396f67a678d0f076cbf391a8
 
   kemal:
     git: https://github.com/kemalcr/kemal.git
-    version: 1.0.0
+    version: 1.11.0
 
   kemal-session:
     git: https://github.com/kemalcr/kemal-session.git
-    version: 1.0.0
-
-  kilt:
-    git: https://github.com/jeromegn/kilt.git
-    version: 0.4.1
+    version: 1.5.0
 
   koa:
     git: https://github.com/hkalexling/koa.git
@@ -58,7 +54,7 @@ shards:
 
   myhtml:
     git: https://github.com/kostya/myhtml.git
-    version: 1.5.8
+    version: 1.5.9
 
   open_api:
     git: https://github.com/hkalexling/open_api.cr.git
@@ -70,11 +66,11 @@ shards:
 
   sanitize:
     git: https://github.com/hkalexling/sanitize.git
-    version: 0.1.0+git.commit.e09520e972d0d9b70b71bb003e6831f7c2c59dce
+    version: 0.1.0+git.commit.ce90b3c3deb163b65a64850a6a70afbfc56cc9fa
 
   sqlite3:
     git: https://github.com/crystal-lang/crystal-sqlite3.git
-    version: 0.18.0
+    version: 0.23.0
 
   tallboy:
     git: https://github.com/epoch/tallboy.git

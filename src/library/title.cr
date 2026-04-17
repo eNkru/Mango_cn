@@ -39,7 +39,7 @@ class Title
     @id = id
     @contents_signature = Dir.contents_signature dir, cache
     @title = File.basename dir
-    @encoded_title = URI.encode @title
+    @encoded_title = URI.encode_path @title
     @title_ids = [] of String
     @entries = [] of Entry
     @mtime = File.info(dir).modification_time
@@ -420,7 +420,7 @@ class Title
   end
 
   def encoded_display_name
-    URI.encode display_name
+    URI.encode_path display_name
   end
 
   def display_name(entry_name)

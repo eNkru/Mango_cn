@@ -8,7 +8,7 @@ targets:
   mango:
     main: src/mango.cr
 
-crystal: 1.0.0
+crystal: '>= 1.14.0'
 
 license: MIT
 
@@ -23,8 +23,6 @@ dependencies:
     github: schovi/baked_file_system
   archive:
     github: hkalexling/archive.cr
-  ameba:
-    github: crystal-ameba/ameba
   clim:
     github: at-grandpa/clim
   duktape:
@@ -34,7 +32,7 @@ dependencies:
   http_proxy:
     github: mamantoha/http_proxy
   image_size:
-   github: hkalexling/image_size.cr
+   github: eNkru/image_size.cr
   koa:
     github: hkalexling/koa
   tallboy:
@@ -44,3 +42,4 @@ dependencies:
    github: hkalexling/mg
   sanitize:
     github: hkalexling/sanitize
+

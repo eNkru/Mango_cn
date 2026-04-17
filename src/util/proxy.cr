@@ -7,7 +7,8 @@ module HTTP
     private def self.exec(uri : URI, tls : TLSContext = nil)
       Logger.debug "Setting proxy"
       previous_def uri, tls do |client, path|
-        client.set_proxy get_proxy uri
+        proxy = get_proxy uri
+        client.proxy = proxy if proxy
         yield client, path
       end
     end
