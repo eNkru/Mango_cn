@@ -94,6 +94,7 @@ class ChapterSorter
   end
 
   private def scan(str, &)
+    str = scrub_utf8(str)
     str.scan /([^0-9\n\r\ ]*)[ ]*([0-9]*\.*[0-9]+)/ do |match|
       key = match[1]
       num = match[2].to_big_d

@@ -5,10 +5,12 @@
 require "big"
 
 def is_numeric(str)
+  str = scrub_utf8(str)
   /^\d+/.match(str) != nil
 end
 
 def split_by_alphanumeric(str)
+  str = scrub_utf8(str)
   arr = [] of String
   str.scan(/([^\d\n\r]*)(\d*)([^\d\n\r]*)/) do |match|
     arr += match.captures.select &.!= ""
