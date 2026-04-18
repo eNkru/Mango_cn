@@ -44,7 +44,7 @@ class ArchiveEntry < Entry
     file = ArchiveFile.new @zip_path
     @pages = file.entries.count do |e|
       SUPPORTED_IMG_TYPES.includes? \
-        MIME.from_filename? e.filename
+        MIME.from_filename? scrub_utf8 e.filename
     end
     file.close
   end
@@ -54,10 +54,11 @@ class ArchiveEntry < Entry
       entries = file.entries
         .select { |e|
           SUPPORTED_IMG_TYPES.includes? \
-            MIME.from_filename? e.filename
+            MIME.from_filename? scrub_utf8 e.filename
         }
         .sort! { |a, b|
-          compare_numerically a.filename, b.filename
+          compare_numerically scrub_utf8(a.filename),
+            scrub_utf8(b.filename)
         }
       yield file, entries
     end
@@ -71,8 +72,8 @@ class ArchiveEntry < Entry
         page = entries[page_num - 1]
         data = file.read_entry page
         if data
-          img = Image.new data, MIME.from_filename(page.filename),
-            page.filename, data.size
+          img = Image.new data, MIME.from_filename(scrub_utf8 page.filename),
+            scrub_utf8(page.filename), data.size
         end
       end
     rescue e

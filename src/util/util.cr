@@ -19,6 +19,14 @@ def random_str
   UUID.random.to_s.gsub "-", ""
 end
 
+# Scrub invalid UTF-8 bytes from the string before applying regex.
+# ZIP archives created on non-UTF-8 systems (common with CJK manga) may
+# contain filenames with invalid UTF-8 sequences that crash Crystal's
+# regex engine with "UTF-8 error: isolated byte with 0x80 bit set".
+def scrub_utf8(str : String) : String
+  str.valid_encoding? ? str : str.scrub
+end
+
 # Works in all Unix systems. Follows https://github.com/crystal-lang/crystal/
 #   blob/master/src/crystal/system/unix/file_info.cr#L42-L48
 def ctime(file_path : String) : Time
