@@ -438,11 +438,16 @@ class Storage
     tags
   end
 
-  def get_tag_titles(tag : String) : Array(String)
+  def get_tag_titles(tag : String, show_hidden : Bool = false) : Array(String)
     tids = [] of String
     MainFiber.run do
       get_db do |db|
-        db.query "select id from tags where tag = (?)", tag do |rs|
+        query = "select tags.id from tags natural join titles " \
+                "where tag = (?) and unavailable = 0"
+        unless show_hidden
+          query += " and hidden = 0"
+        end
+        db.query query, tag do |rs|
           rs.each do
             tids << rs.read String
           end
@@ -457,7 +462,7 @@ class Storage
     MainFiber.run do
       get_db do |db|
         db.query "select distinct tag from tags natural join titles " \
-                 "where unavailable = 0" do |rs|
+                 "where unavailable = 0 and hidden = 0" do |rs|
           rs.each do
             tags << rs.read String
           end
@@ -617,6 +622,40 @@ class Storage
       end
     end
     {token, expires}
+  end
+
+  def set_title_hidden(title_id : String, hidden : Int32)
+    MainFiber.run do
+      get_db do |db|
+        db.exec "update titles set hidden = (?) where id = (?)",
+          hidden, title_id
+      end
+    end
+  end
+
+  def get_hidden_title_ids : Array(String)
+    ids = [] of String
+    MainFiber.run do
+      get_db do |db|
+        db.query "select id from titles where hidden = 1" do |rs|
+          rs.each do
+            ids << rs.read String
+          end
+        end
+      end
+    end
+    ids
+  end
+
+  def get_title_hidden(title_id : String) : Int32
+    hidden = 0
+    MainFiber.run do
+      get_db do |db|
+        hidden = db.query_one "select hidden from titles where id = (?)",
+          title_id, as: Int32
+      end
+    end
+    hidden
   end
 
   def count_titles : Int32

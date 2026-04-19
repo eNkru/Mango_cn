@@ -71,6 +71,7 @@ class Library
         @@default = loaded
         Logger.debug "Library cache loaded"
       end
+      Library.default.refresh_hidden_states
       Library.default.register_jobs
     rescue e
       Logger.error e
@@ -122,6 +123,14 @@ class Library
     @title_ids.map { |tid| self.get_title!(tid) }
   end
 
+  def visible_titles : Array(Title)
+    titles.select { |t| !t.hidden? }
+  end
+
+  def visible_titles(show_hidden : Bool) : Array(Title)
+    show_hidden ? titles : visible_titles
+  end
+
   def sorted_titles(username, opt : SortOptions? = nil)
     if opt.nil?
       opt = SortOptions.from_info_json @dir, username
@@ -129,6 +138,15 @@ class Library
 
     # Helper function from src/util/util.cr
     sort_titles titles, opt.not_nil!, username
+  end
+
+  def visible_sorted_titles(username, opt : SortOptions? = nil, show_hidden : Bool = false) : Array(Title)
+    if opt.nil?
+      opt = SortOptions.from_info_json @dir, username
+    end
+
+    visible = visible_titles(show_hidden)
+    sort_titles visible, opt.not_nil!, username
   end
 
   def deep_titles
@@ -139,13 +157,22 @@ class Library
     titles.flat_map &.deep_entries
   end
 
+  def refresh_hidden_states
+    hidden_ids = Storage.default.get_hidden_title_ids
+    hidden_set = Set(String).new(hidden_ids)
+    # Set hidden state from the set directly instead of N individual DB queries
+    @title_hash.each do |id, title|
+      title.set_hidden_from_db(hidden_set.includes?(id) ? 1 : 0)
+    end
+  end
+
   def build_json(*, slim = false, depth = -1, sort_context = nil,
-                 percentage = false)
+                 percentage = false, show_hidden = false)
     _titles = if sort_context
-                sorted_titles sort_context[:username],
-                  sort_context[:opt]
+                visible_sorted_titles sort_context[:username],
+                  sort_context[:opt], show_hidden: show_hidden
               else
-                self.titles
+                visible_titles(show_hidden)
               end
     JSON.build do |json|
       json.object do
@@ -235,6 +262,8 @@ class Library
     Storage.default.mark_unavailable examine_context["deleted_entry_ids"],
       examine_context["deleted_title_ids"]
 
+    refresh_hidden_states
+
     spawn do
       save_instance
     end
@@ -242,9 +271,11 @@ class Library
 
   def get_continue_reading_entries(username)
     cr_entries = deep_titles
+      .reject { |t| t.hidden? || t.parents.any?(&.hidden?) }
       .map(&.get_last_read_entry username)
       # Select elements with type `Entry` from the array and ignore all `Nil`s
       .select(Entry)[0...ENTRIES_IN_HOME_SECTIONS]
+      .reject { |e| e.book.hidden? || e.book.parents.any?(&.hidden?) }
       .map { |e|
         # Get the last read time of the entry. If it hasn't been started, get
         #   the last read time of the previous entry
@@ -278,7 +309,8 @@ class Library
     recently_added = [] of RA
     last_date_added = nil
 
-    titles.flat_map(&.deep_entries_with_date_added)
+    visible_titles.flat_map(&.deep_entries_with_date_added)
+      .reject { |e| e[:entry].book.hidden? || e[:entry].book.parents.any?(&.hidden?) }
       .select(&.[:date_added].> 1.month.ago)
       .sort! { |a, b| b[:date_added] <=> a[:date_added] }
       .each do |e|
@@ -315,7 +347,7 @@ class Library
     #     - Vol. 2
     # If we use `deep_titles`, the start reading section might include `Vol. 2`
     #   when the user hasn't started `Vol. 1` yet
-    titles
+    visible_titles
       .select(&.load_percentage(username).== 0)
       .sample(ENTRIES_IN_HOME_SECTIONS)
       .shuffle!

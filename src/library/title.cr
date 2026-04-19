@@ -23,6 +23,8 @@ class Title
   @cached_display_name : String?
   @[YAML::Field(ignore: true)]
   @cached_cover_url : String?
+  @[YAML::Field(ignore: true)]
+  @hidden = 0
 
   def initialize(@dir : String, @parent_id, cache = {} of String => String)
     storage = Storage.default
@@ -285,6 +287,7 @@ class Title
             end
           end
         end
+        json.field "hidden" { json.number @hidden }
         json.field "parents" do
           json.array do
             self.parents.each do |title|
@@ -388,6 +391,24 @@ class Title
     end
 
     @entry_sort_title_cache.not_nil![entry_id]?
+  end
+
+  def hidden : Int32
+    @hidden
+  end
+
+  def hidden? : Bool
+    @hidden == 1
+  end
+
+  def set_hidden(value : Int32)
+    @hidden = value
+    Storage.default.set_title_hidden @id, value
+  end
+
+  # Set hidden state from DB data without issuing another DB write
+  def set_hidden_from_db(value : Int32)
+    @hidden = value
   end
 
   def tags

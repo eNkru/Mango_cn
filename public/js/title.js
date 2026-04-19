@@ -2,6 +2,36 @@ $(() => {
 	setupAcard();
 });
 
+const toggleHidden = (tid, value) => {
+	const url = `${base_url}api/admin/hidden/${tid}/${value}`;
+	$.ajax({
+			method: 'PUT',
+			url: url,
+			dataType: 'json'
+		})
+		.done(data => {
+			if (data.success) {
+				location.reload();
+			} else {
+				alert('danger', data.error || '操作失败');
+			}
+		})
+		.fail((jqXHR, status) => {
+			alert('danger', `Error: [${jqXHR.status}] ${jqXHR.statusText}`);
+		});
+};
+
+const toggleShowHidden = (value) => {
+	const params = new URLSearchParams(window.location.search);
+	if (value === 1) {
+		params.set('show_hidden', '1');
+	} else {
+		params.delete('show_hidden');
+	}
+	const query = params.toString();
+	window.location.href = window.location.pathname + (query ? '?' + query : '');
+};
+
 const setupAcard = () => {
 	$('.acard.is_entry').click((e) => {
 		if ($(e.target).hasClass('no-modal')) return;
