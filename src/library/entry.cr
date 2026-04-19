@@ -255,4 +255,13 @@ abstract class Entry
   abstract def page_dimensions
 
   abstract def examine : Bool?
+
+  # Applies an id remap in place. Called by `Title#apply_id_remap` after
+  # `Storage#bulk_insert_ids` resolves UNIQUE-constraint conflicts with
+  # pre-existing DB rows.
+  def apply_id_remap(remap : Hash(String, String))
+    if new_id = remap[@id]?
+      @id = new_id
+    end
+  end
 end

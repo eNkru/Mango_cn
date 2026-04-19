@@ -26,6 +26,14 @@ class Storage
     id: String,
     signature: String?)
 
+  # When a UNIQUE constraint blocks a new row insert during
+  # `bulk_insert_ids`, we re-link the in-memory id to the id of the
+  # pre-existing row. The two hashes below map newly-generated ids to
+  # the existing ids we should use instead.
+  alias IDRemap = NamedTuple(
+    titles: Hash(String, String),
+    entries: Hash(String, String))
+
   use_default
 
   def initialize(db_path : String? = nil, init_user = true, *,
@@ -316,7 +324,9 @@ class Storage
     @@insert_title_ids << tp
   end
 
-  def bulk_insert_ids
+  def bulk_insert_ids : IDRemap
+    title_remap = {} of String => String
+    entry_remap = {} of String => String
     MainFiber.run do
       get_db do |db|
         db.transaction do |tran|
@@ -324,22 +334,61 @@ class Storage
           @@insert_title_ids.each do |tp|
             path = Path.new(tp[:path])
               .relative_to(Config.current.library_path).to_s
-            conn.exec "insert into titles (id, path, signature, " \
-                      "unavailable) values (?, ?, ?, 0)",
-              tp[:id], path, tp[:signature].to_s
+            begin
+              conn.exec "insert into titles (id, path, signature, " \
+                        "unavailable) values (?, ?, ?, 0)",
+                tp[:id], path, tp[:signature].to_s
+            rescue e
+              existing_id = conn.query_one? \
+                "select id from titles where path = (?)",
+                path, as: String
+              if existing_id && existing_id != tp[:id]
+                Logger.warn "Title path '#{path}' already exists in DB " \
+                            "with id #{existing_id}. Re-linking to the " \
+                            "existing row (discarding new id #{tp[:id]})."
+                conn.exec "update titles set signature = (?), " \
+                          "unavailable = 0 where id = (?)",
+                  tp[:signature].to_s, existing_id
+                title_remap[tp[:id]] = existing_id
+              else
+                Logger.error "Failed to insert title row for path " \
+                             "'#{path}': #{e}"
+                raise e
+              end
+            end
           end
           @@insert_entry_ids.each do |tp|
             path = Path.new(tp[:path])
               .relative_to(Config.current.library_path).to_s
-            conn.exec "insert into ids (id, path, signature, " \
-                      "unavailable) values (?, ?, ?, 0)",
-              tp[:id], path, tp[:signature].to_s
+            begin
+              conn.exec "insert into ids (id, path, signature, " \
+                        "unavailable) values (?, ?, ?, 0)",
+                tp[:id], path, tp[:signature].to_s
+            rescue e
+              existing_id = conn.query_one? \
+                "select id from ids where path = (?)",
+                path, as: String
+              if existing_id && existing_id != tp[:id]
+                Logger.warn "Entry path '#{path}' already exists in DB " \
+                            "with id #{existing_id}. Re-linking to the " \
+                            "existing row (discarding new id #{tp[:id]})."
+                conn.exec "update ids set signature = (?), " \
+                          "unavailable = 0 where id = (?)",
+                  tp[:signature].to_s, existing_id
+                entry_remap[tp[:id]] = existing_id
+              else
+                Logger.error "Failed to insert entry row for path " \
+                             "'#{path}': #{e}"
+                raise e
+              end
+            end
           end
         end
       end
       @@insert_entry_ids.clear
       @@insert_title_ids.clear
     end
+    {titles: title_remap, entries: entry_remap}
   end
 
   def get_title_sort_title(title_id : String)

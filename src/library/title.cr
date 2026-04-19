@@ -411,6 +411,24 @@ class Title
     @hidden = value
   end
 
+  # Applies an id remap in place. Called by `Library#scan` after
+  # `Storage#bulk_insert_ids` resolves UNIQUE-constraint conflicts with
+  # pre-existing DB rows by reusing their ids instead of inserting new
+  # ones. Updates @id, @parent_id, @title_ids, and nested entries.
+  def apply_id_remap(title_remap : Hash(String, String),
+                     entry_remap : Hash(String, String))
+    if new_id = title_remap[@id]?
+      @id = new_id
+    end
+    if new_pid = title_remap[@parent_id]?
+      @parent_id = new_pid
+    end
+    @title_ids = @title_ids.map { |tid| title_remap[tid]? || tid }
+    @entries.each do |entry|
+      entry.apply_id_remap entry_remap
+    end
+  end
+
   def tags
     Storage.default.get_title_tags @id
   end

@@ -1008,6 +1008,129 @@
   }
 }
 
+// --- Hide/Show Transition Animations ---
+@keyframes card-fade-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.96);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+}
+
+@keyframes card-fade-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes title-fade-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(0.98);
+  }
+}
+
+@keyframes title-fade-in {
+  0% {
+    opacity: 0.3;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes overlay-fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes body-restore {
+  0% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.item.is-hiding {
+  animation: card-fade-out 0.4s cubic-bezier(0.4, 0, 1, 1) forwards;
+  pointer-events: none;
+}
+
+.item.is-unhiding {
+  animation: card-fade-in 0.4s cubic-bezier(0, 0, 0.2, 1) forwards;
+
+  .acard::after {
+    animation: overlay-fade-out 0.4s ease forwards;
+  }
+
+  .uk-card-body {
+    animation: body-restore 0.4s ease forwards;
+  }
+}
+
+.title-heading.is-hiding {
+  animation: title-fade-out 0.3s ease forwards;
+}
+
+.title-heading.is-unhiding {
+  animation: title-fade-in 0.3s ease forwards;
+}
+
+// Reduced motion — disable hide/show animations
+@media (prefers-reduced-motion: reduce) {
+  .item.is-hiding,
+  .item.is-unhiding {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+
+    .acard::after {
+      animation: none !important;
+      opacity: 1 !important;
+    }
+
+    .uk-card-body {
+      animation: none !important;
+      opacity: 1 !important;
+    }
+  }
+  .title-heading.is-hiding,
+  .title-heading.is-unhiding {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
 // --- Hidden Book Cards ---
 .item.is_hidden {
   .acard {
@@ -1020,104 +1143,159 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.35);
+      background: rgba(0, 0, 0, 0.4);
       border-radius: @radius-md;
       z-index: 1;
       pointer-events: none;
+      transition: background 0.3s ease;
+    }
+
+    &:hover::after {
+      background: rgba(0, 0, 0, 0.25);
     }
   }
 
   .uk-card-body {
-    opacity: 0.65;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover .uk-card-body {
+    opacity: 0.8;
   }
 }
 
 .hidden-badge {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 10px;
+  left: 10px;
   z-index: 2;
-  background: rgba(239, 83, 80, 0.85);
+  background: rgba(239, 83, 80, 0.9);
   color: #fff;
-  padding: 2px 10px;
-  border-radius: 12px;
-  font-size: 0.72rem;
+  padding: 4px 12px;
+  border-radius: 14px;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.03em;
-  box-shadow: 0 2px 8px rgba(239, 83, 80, 0.3);
-}
+  box-shadow: 0 2px 10px rgba(239, 83, 80, 0.35);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  backdrop-filter: blur(4px);
+  line-height: 1.4;
 
-.hidden-card-actions {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  z-index: 5;
-
-  .hide-toggle-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    color: @accent-start;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-
-    &:hover {
-      background: @accent-gradient;
-      color: #fff;
-      transform: scale(1.1);
-    }
+  i {
+    font-size: 0.7rem;
+    opacity: 0.85;
   }
 }
 
-.hide-book-btn {
+// --- Card Hover Actions (hide/unhide on image) ---
+.card-hover-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+  display: flex;
+  gap: 6px;
+}
+
+.card-action-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
   border: none;
-  color: #bbb;
   cursor: pointer;
-  padding: 2px;
-  margin-left: 4px;
-  transition: color 0.2s ease;
-  vertical-align: middle;
-  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
 
   &:hover {
-    color: #ef5350;
+    transform: scale(1.12);
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 }
 
-.hide-toggle-btn.library-toggle {
-  display: inline-flex;
+.card-hide-btn {
+  background: rgba(255, 255, 255, 0.92);
+  color: #999;
+
+  &:hover {
+    background: @accent-gradient;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4);
+  }
+}
+
+.card-unhide-btn {
+  background: rgba(239, 83, 80, 0.9);
+  color: #fff;
+
+  &:hover {
+    background: rgba(239, 83, 80, 1);
+    box-shadow: 0 4px 14px rgba(239, 83, 80, 0.45);
+  }
+}
+
+// --- Library / Tag Toggle Button (show/hide hidden) ---
+.hide-toggle-btn {
+  display: inline-flex !important;
   align-items: center;
-  gap: 6px;
-  text-decoration: none;
+  gap: 7px;
+  text-decoration: none !important;
+  white-space: nowrap;
+  transition: all 0.25s ease;
 
   i {
     font-size: 0.9rem;
   }
 }
 
+.mango-btn-active-toggle {
+  background: @accent-gradient !important;
+  color: #fff !important;
+  border: 2px solid transparent !important;
+  box-shadow: 0 4px 14px rgba(102, 126, 234, 0.3) !important;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
+    color: #fff !important;
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25) !important;
+  }
+}
+
 // --- Hidden Title Badge (title detail page) ---
 .hidden-title-badge {
-  display: inline-block;
-  font-size: 0.72rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
   font-weight: 600;
   color: #fff;
   background: linear-gradient(135deg, #ef5350, #e53935);
-  padding: 3px 12px;
-  border-radius: 12px;
+  padding: 4px 14px;
+  border-radius: 14px;
   letter-spacing: 0.03em;
-  box-shadow: 0 2px 8px rgba(239, 83, 80, 0.25);
+  box-shadow: 0 2px 10px rgba(239, 83, 80, 0.3);
   vertical-align: middle;
-  margin-left: 8px;
+  margin-left: 10px;
+
+  i {
+    font-size: 0.7rem;
+    opacity: 0.85;
+  }
 }
 
 // --- Admin spin animation ---
@@ -2012,31 +2190,56 @@
   // Hidden book cards dark
   .item.is_hidden {
     .acard::after {
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    &:hover .acard::after {
+      background: rgba(0, 0, 0, 0.35);
     }
   }
 
-  .hidden-card-actions .hide-toggle-btn {
-    background: rgba(30, 30, 50, 0.9);
-    color: #8b9cf7;
+  .card-hover-actions {
+    .card-hide-btn {
+      background: rgba(30, 30, 50, 0.92);
+      color: #aaa;
 
-    &:hover {
-      background: @accent-gradient;
+      &:hover {
+        background: @accent-gradient;
+        color: #fff;
+      }
+    }
+
+    .card-unhide-btn {
+      background: rgba(239, 83, 80, 0.85);
       color: #fff;
+
+      &:hover {
+        background: rgba(239, 83, 80, 1);
+      }
     }
   }
 
-  .hide-book-btn {
-    color: #555;
-    &:hover { color: #ef5350; }
+  .hidden-badge {
+    background: rgba(239, 83, 80, 0.85);
+    box-shadow: 0 2px 10px rgba(239, 83, 80, 0.25);
   }
 
+  // Toggle button dark — inactive state
   .hide-toggle-btn.mango-btn-outline {
     border-color: rgba(102, 126, 234, 0.3) !important;
     color: #8b9cf7 !important;
     &:hover {
       border-color: #8b9cf7 !important;
       background: rgba(102, 126, 234, 0.1) !important;
+    }
+  }
+
+  // Toggle button dark — active state
+  .mango-btn-active-toggle {
+    box-shadow: 0 4px 14px rgba(102, 126, 234, 0.2) !important;
+
+    &:hover {
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3) !important;
     }
   }
 
