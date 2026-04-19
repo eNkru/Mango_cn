@@ -11,6 +11,26 @@ const toggleHidden = (tid, value) => {
 		})
 		.done(data => {
 			if (data.success) {
+				const isHiding = value === 1;
+				const animClass = isHiding ? 'is-hiding' : 'is-unhiding';
+				const animDuration = 400; // matches CSS animation duration
+
+				// Animate card on library/tag pages
+				const $card = $(`.item[data-title-id="${tid}"]`);
+				if ($card.length) {
+					$card.addClass(animClass);
+					setTimeout(() => location.reload(), animDuration);
+					return;
+				}
+
+				// Animate title heading on title detail page
+				const $heading = $('.title-heading');
+				if ($heading.length) {
+					$heading.addClass(animClass);
+					setTimeout(() => location.reload(), 300);
+					return;
+				}
+
 				location.reload();
 			} else {
 				alert('danger', data.error || '操作失败');

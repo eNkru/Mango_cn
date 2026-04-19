@@ -22,7 +22,7 @@
   <h2 class="title-heading" data-file-title="<%= HTML.escape(title.title) %>" data-sort-title="<%= HTML.escape(title.sort_title_db || "") %>">
     <span><%= title.display_name %></span>
     <% if is_hidden %>
-      <span class="hidden-title-badge">已隐藏</span>
+      <span class="hidden-title-badge"><i class="fas fa-eye-slash"></i> 已隐藏</span>
     <% end %>
     <% if is_admin %>
       <a onclick="toggleHidden('<%= title.id %>', <%= is_hidden ? 0 : 1 %>)" class="uk-icon-button" title="<%= is_hidden ? "显示此书" : "隐藏此书" %>" aria-label="<%= is_hidden ? "显示此书" : "隐藏此书" %>">

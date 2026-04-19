@@ -51,31 +51,39 @@ class Library
 
     Logger.debug "Loading cached library from #{path}"
 
+    loaded_lib : Library? = nil
     begin
       Compress::Gzip::Reader.open path do |content|
-        loaded = Library.from_yaml content
-        # We will have to do a full restart in these cases. Otherwise having
-        #   two instances of the library will cause some weirdness.
-        if loaded.dir != Config.current.library_path
-          Logger.fatal "Cached library dir #{loaded.dir} does not match " \
-                       "current library dir #{Config.current.library_path}. " \
-                       "Deleting cache"
-          delete_cache_and_exit path
+        candidate = Library.from_yaml content
+        if candidate.dir != Config.current.library_path
+          Logger.warn "Cached library dir #{candidate.dir} does not " \
+                      "match current library dir " \
+                      "#{Config.current.library_path}. Discarding cache; " \
+                      "a fresh scan will be performed."
+          delete_library_cache path
+        elsif candidate.title_ids.size > 0 &&
+              Storage.default.count_titles == 0
+          Logger.warn "The library cache is inconsistent with the DB. " \
+                      "Discarding cache; a fresh scan will be performed."
+          delete_library_cache path
+        else
+          loaded_lib = candidate
         end
-        if loaded.title_ids.size > 0 &&
-           Storage.default.count_titles == 0
-          Logger.fatal "The library cache is inconsistent with the DB. " \
-                       "Deleting cache"
-          delete_cache_and_exit path
-        end
-        @@default = loaded
-        Logger.debug "Library cache loaded"
       end
-      Library.default.refresh_hidden_states
-      Library.default.register_jobs
     rescue e
-      Logger.error e
+      Logger.error "Failed to load library cache (#{e}). Discarding " \
+                   "cache and performing a fresh scan."
+      delete_library_cache path
+      return
     end
+
+    instance = loaded_lib
+    return if instance.nil?
+
+    @@default = instance
+    Logger.debug "Library cache loaded"
+    instance.refresh_hidden_states
+    instance.register_jobs
   end
 
   def initialize
@@ -253,8 +261,15 @@ class Library
         @title_ids << title.id
       end
 
-    storage.bulk_insert_ids
+    remap = storage.bulk_insert_ids
     storage.close
+
+    unless remap[:titles].empty? && remap[:entries].empty?
+      Logger.warn "Applying id remap after DB conflicts: " \
+                  "#{remap[:titles].size} title(s), " \
+                  "#{remap[:entries].size} entry/entries."
+      apply_id_remap remap
+    end
 
     ms = (Time.local - start).total_milliseconds
     Logger.info "Scanned #{@title_ids.size} titles in #{ms}ms"
@@ -267,6 +282,32 @@ class Library
     spawn do
       save_instance
     end
+  end
+
+  # Applies an id remap produced by `Storage#bulk_insert_ids` when UNIQUE
+  # constraint conflicts force us to reuse existing DB ids. Mutates each
+  # Title's id/parent_id/title_ids/entries and rebuilds @title_hash so
+  # in-memory state stays consistent with the DB.
+  private def apply_id_remap(
+    remap : NamedTuple(titles: Hash(String, String),
+                       entries: Hash(String, String))
+  )
+    title_remap = remap[:titles]
+    entry_remap = remap[:entries]
+
+    @title_hash.each_value do |title|
+      title.apply_id_remap title_remap, entry_remap
+    end
+
+    # Rebuild @title_hash with the updated ids as keys
+    new_hash = {} of String => Title
+    @title_hash.each_value do |title|
+      new_hash[title.id] = title
+    end
+    @title_hash = new_hash
+
+    # Update top-level @title_ids
+    @title_ids = @title_ids.map { |tid| title_remap[tid]? || tid }
   end
 
   def get_continue_reading_entries(username)

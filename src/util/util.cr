@@ -188,11 +188,18 @@ def sanitize_filename(str : String) : String
   sanitized.size > 0 ? sanitized : random_str
 end
 
-def delete_cache_and_exit(path : String)
-  File.delete path
-  Logger.fatal "Invalid library cache deleted. Mango needs to " \
-               "perform a full reset to recover from this. " \
-               "Pleae restart Mango. This is NOT a bug."
-  Logger.fatal "Exiting"
-  exit 1
+# Deletes the library cache file if present. Logs a warning on success
+# and an error on failure, but never exits the process. The caller is
+# expected to recover by falling back to a fresh library scan.
+def delete_library_cache(path : String) : Bool
+  return false unless File.exists? path
+  begin
+    File.delete path
+    Logger.warn "Invalid library cache deleted at #{path}. " \
+                "A fresh library scan will be performed."
+    true
+  rescue e
+    Logger.error "Failed to delete library cache at #{path}: #{e}"
+    false
+  end
 end

@@ -15,7 +15,7 @@
       <%= render_component "sort-form" %>
     </div>
     <% if is_admin %>
-      <a href="#" onclick="toggleShowHidden(<%= show_hidden ? 0 : 1 %>); return false;" class="mango-btn mango-btn-sm mango-btn-outline hide-toggle-btn" title="<%= show_hidden ? "隐藏已隐藏" : "显示隐藏" %>">
+      <a href="#" onclick="toggleShowHidden(<%= show_hidden ? 0 : 1 %>); return false;" class="mango-btn mango-btn-sm <%= show_hidden ? "mango-btn-active-toggle" : "mango-btn-outline" %> hide-toggle-btn" title="<%= show_hidden ? "隐藏已隐藏" : "显示隐藏" %>">
         <i class="fas <%= show_hidden ? "fa-eye" : "fa-eye-slash" %>"></i>
         <span><%= show_hidden ? "隐藏已隐藏" : "显示隐藏" %></span>
       </a>
