@@ -9,9 +9,14 @@
   <% grouped_count = 1 %>
 <% end %>
 
-<div class="item"
+<% is_title_hidden = item.is_a?(Title) && item.hidden? %>
+
+<div class="item<%= is_title_hidden && show_hidden ? " is_hidden" : "" %>"
   <% if item.is_a? Entry %> 
     id="<%= item.id %>"
+  <% end %>
+  <% if item.is_a? Title %>
+    data-title-id="<%= item.id %>"
   <% end %>>
 
   <div class="acard
@@ -50,7 +55,17 @@
             <span class="fas fa-check-circle fa-3x" @click.stop="selected = !selected; $dispatch(selected ? 'add' : 'remove')" :style="`color:${selected && 'orange'};`"></span>
           </div>
         </div>
+        <% if is_title_hidden && is_admin %>
+          <div class="hidden-card-actions" x-show="hover" @click.stop>
+            <button class="hide-toggle-btn" onclick="toggleHidden('<%= item.id %>', 0)" title="显示此书">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        <% end %>
       </div>
+      <% if is_title_hidden && show_hidden %>
+        <div class="hidden-badge">已隐藏</div>
+      <% end %>
 
       <div class="uk-card-body">
         <% unless progress < 0 || progress > 100 || progress.nan? %>
@@ -81,6 +96,11 @@
             <p class="uk-text-meta"><%= item.content_label %></p>
           <% else %>
             <p class="uk-text-meta"><%= grouped_count %> 新条目</p>
+          <% end %>
+          <% if is_admin && !is_title_hidden %>
+            <button class="hide-book-btn" onclick="event.stopPropagation(); toggleHidden('<%= item.id %>', 1)" title="隐藏此书">
+              <i class="fas fa-eye-slash"></i>
+            </button>
           <% end %>
         <% end %>
       </div>

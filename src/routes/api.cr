@@ -336,10 +336,12 @@ struct APIRouter
       slim = !env.params.query["slim"]?.nil?
       depth = env.params.query["depth"]?.try(&.to_i?) || -1
       percentage = !env.params.query["percentage"]?.nil?
+      show_hidden = !env.params.query["show_hidden"]?.nil?
 
       send_json env, Library.default.build_json(slim: slim, depth: depth,
         sort_context: {username: username,
-                       opt:      sort_opt}, percentage: percentage)
+                       opt:      sort_opt}, percentage: percentage,
+        show_hidden: show_hidden)
     rescue e
       Logger.error e
       send_json env, {
@@ -1417,6 +1419,57 @@ struct APIRouter
         send_json env, {
           "success" => true,
           "error"   => nil,
+        }.to_json
+      rescue e
+        Logger.error e
+        send_json env, {
+          "success" => false,
+          "error"   => e.message,
+        }.to_json
+      end
+    end
+
+    Koa.describe "Sets the hidden status of a title", <<-MD
+    When `value` is 1, the title will be hidden from the library and home pages. When `value` is 0, the title will be visible again.
+    MD
+    Koa.path "tid", desc: "Title ID"
+    Koa.path "value", desc: "1 to hide, 0 to unhide"
+    Koa.response 200, schema: "result"
+    Koa.tags ["admin", "library"]
+    put "/api/admin/hidden/:tid/:value" do |env|
+      begin
+        tid = env.params.url["tid"]
+        value = env.params.url["value"].to_i
+        raise "Invalid value. Must be 0 or 1" unless value == 0 || value == 1
+
+        title = Library.default.get_title tid
+        raise "Title ID `#{tid}` not found" if title.nil?
+
+        title.set_hidden value
+        send_json env, {
+          "success" => true,
+        }.to_json
+      rescue e
+        Logger.error e
+        send_json env, {
+          "success" => false,
+          "error"   => e.message,
+        }.to_json
+      end
+    end
+
+    Koa.describe "Returns the list of hidden title IDs"
+    Koa.response 200, schema: {
+      "success" => Bool,
+      "error"   => String?,
+      "titles"  => [String],
+    }
+    Koa.tags ["admin", "library"]
+    get "/api/admin/hidden_titles" do |env|
+      begin
+        send_json env, {
+          "success" => true,
+          "titles"  => Storage.default.get_hidden_title_ids,
         }.to_json
       rescue e
         Logger.error e

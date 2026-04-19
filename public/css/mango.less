@@ -1008,6 +1008,118 @@
   }
 }
 
+// --- Hidden Book Cards ---
+.item.is_hidden {
+  .acard {
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: @radius-md;
+      z-index: 1;
+      pointer-events: none;
+    }
+  }
+
+  .uk-card-body {
+    opacity: 0.65;
+  }
+}
+
+.hidden-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  background: rgba(239, 83, 80, 0.85);
+  color: #fff;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  box-shadow: 0 2px 8px rgba(239, 83, 80, 0.3);
+}
+
+.hidden-card-actions {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 5;
+
+  .hide-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    color: @accent-start;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+    &:hover {
+      background: @accent-gradient;
+      color: #fff;
+      transform: scale(1.1);
+    }
+  }
+}
+
+.hide-book-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #bbb;
+  cursor: pointer;
+  padding: 2px;
+  margin-left: 4px;
+  transition: color 0.2s ease;
+  vertical-align: middle;
+  font-size: 0.8rem;
+
+  &:hover {
+    color: #ef5350;
+  }
+}
+
+.hide-toggle-btn.library-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+
+  i {
+    font-size: 0.9rem;
+  }
+}
+
+// --- Hidden Title Badge (title detail page) ---
+.hidden-title-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #ef5350, #e53935);
+  padding: 3px 12px;
+  border-radius: 12px;
+  letter-spacing: 0.03em;
+  box-shadow: 0 2px 8px rgba(239, 83, 80, 0.25);
+  vertical-align: middle;
+  margin-left: 8px;
+}
+
 // --- Admin spin animation ---
 @keyframes admin-spin {
   from { transform: rotate(0deg); }
@@ -1889,6 +2001,42 @@
         background: @accent-gradient;
         color: #fff;
       }
+    }
+
+    .hidden-title-badge {
+      background: linear-gradient(135deg, #ef5350, #e53935);
+      box-shadow: 0 2px 8px rgba(239, 83, 80, 0.2);
+    }
+  }
+
+  // Hidden book cards dark
+  .item.is_hidden {
+    .acard::after {
+      background: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .hidden-card-actions .hide-toggle-btn {
+    background: rgba(30, 30, 50, 0.9);
+    color: #8b9cf7;
+
+    &:hover {
+      background: @accent-gradient;
+      color: #fff;
+    }
+  }
+
+  .hide-book-btn {
+    color: #555;
+    &:hover { color: #ef5350; }
+  }
+
+  .hide-toggle-btn.mango-btn-outline {
+    border-color: rgba(102, 126, 234, 0.3) !important;
+    color: #8b9cf7 !important;
+    &:hover {
+      border-color: #8b9cf7 !important;
+      background: rgba(102, 126, 234, 0.1) !important;
     }
   }
 

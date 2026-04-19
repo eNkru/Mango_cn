@@ -43,7 +43,8 @@ struct MainRouter
         sort_opt = SortOptions.from_info_json Library.default.dir, username
         get_and_save_sort_opt Library.default.dir
 
-        titles = Library.default.sorted_titles username, sort_opt
+        show_hidden = env.params.query["show_hidden"]? == "1"
+        titles = Library.default.visible_sorted_titles username, sort_opt, show_hidden: show_hidden
         percentage = titles.map &.load_percentage username
 
         layout "library"
@@ -70,6 +71,7 @@ struct MainRouter
           t = title.titles[i]
           title_percentage_map[t.id] = tp
         end
+        is_hidden = title.hidden?
 
         layout "title"
       rescue e
@@ -112,7 +114,8 @@ struct MainRouter
         sort_opt = SortOptions.new
         get_sort_opt
 
-        title_ids = Storage.default.get_tag_titles tag
+        show_hidden = env.params.query["show_hidden"]? == "1"
+        title_ids = Storage.default.get_tag_titles tag, show_hidden: show_hidden
 
         raise "Tag #{tag} not found" if title_ids.empty?
 
@@ -134,7 +137,7 @@ struct MainRouter
         {
           tag:         tag,
           encoded_tag: URI.encode_www_form(tag, space_to_plus: false),
-          count:       Storage.default.get_tag_titles(tag).size,
+          count:       Storage.default.get_tag_titles(tag, show_hidden: false).size,
         }
       end
       # Sort by :count reversly, and then sort by :tag
