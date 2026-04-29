@@ -119,3 +119,6 @@ If you see an error like `Error: type must be Ameba::Severity, not (Ameba::Sever
   shards install
   make setup
   ```
+  
+## Special thanks
+[LINUX DO](https://linux.do/)
